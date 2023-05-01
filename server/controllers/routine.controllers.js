@@ -61,7 +61,7 @@ export const deleteRoutine = async (req, res) => {
     ]);
 
     if (result.affectedRows === 0) {
-      res.status(404).json({ message: "athlete not found" });
+      res.status(404).json({ message: "routine not found" });
     }
     return res.sendStatus(204);
   } catch (error) {
