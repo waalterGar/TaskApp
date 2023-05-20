@@ -3,7 +3,7 @@ import { pool } from "../db.js";
 export const getMeals = async (req, res) => {
   try {
     const [result] = await pool.query(
-      "SELECT * FROM meal"
+      "SELECT * FROM meal;"
     );
     res.json(result);
   } catch (error) {

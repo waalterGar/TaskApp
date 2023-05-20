@@ -3,7 +3,7 @@ import { getTrainers, getTrainer, getAthletes, createTrainer,
     updateTrainer, deleteTrainer, createTrainerAthlete, 
     deleteTrainerAthlete, createRoutine, deleteRoutine,
     createSession, updateSession, deleteSession,
-    getExecutions, getAthleteMealRecords, getProgression } from "../controllers/trainers.controllers.js";
+    getExecutions, getAthleteMealRecords, getProgression, getSessions, getTrainerExercises, getSession} from "../controllers/trainers.controllers.js";
 
 const router = Router();
 
@@ -15,9 +15,16 @@ router.get("/trainers/:id", getTrainer);
 
 router.get("/trainers/:id/athletes", getAthletes);
 
+router.get("/athletes/:id/sessions", getSessions);
+
+router.get("/sessions/:id", getSession);
+
 router.get("/sessions/:id/executions", getExecutions);
 
-router.get("/sessions/:sessionId/executions/:exerciseId", getProgression);
+router.get("/athletes/:idAthlete/exercises/:exerciseId/progression", getProgression);
+
+
+router.get("/trainers/:id/exercises", getTrainerExercises);
 
 router.get("/athletes/:athleteId/mealRecords", getAthleteMealRecords);
 

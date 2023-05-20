@@ -1,9 +1,31 @@
 import { pool } from "../db.js";
 
+function formatDate(date) {
+  let d = new Date(date),
+    month = "" + (d.getMonth() + 1),
+    day = "" + d.getDate(),
+    year = "" + d.getFullYear();
+  if (month.length < 2) month = "0" + month;
+  if (day.length < 2) day = "0" + day;
+  return [day, month, year].join("-");
+}
+
 export const getTrainers = async (req, res) => {
   try {
     const [result] = await pool.query(
       "SELECT * FROM trainer"
+    );
+    res.json(result);
+  } catch (error) {
+    return res.status(500).json({ message: error.message });
+  }
+};
+
+export const getTrainerExercises = async (req, res) => {
+  try {
+    const [result] = await pool.query(
+      "SELECT * FROM exercise WHERE trainer_id = ?",
+      [req.params.id]
     );
     res.json(result);
   } catch (error) {
@@ -28,7 +50,7 @@ export const getTrainer = async (req, res) => {
 export const getAthletes = async (req, res) => {
   try {
     const [result] = await pool.query(
-      "SELECT * FROM athlete WHERE trainer_id = ?",[
+      "SELECT a.id, a.name, a.email, a.phone_num, a.birth_date, a.gender, a.height, a.weight, np.name as nutritional_plan_name, r.name as routine_name FROM athlete as a LEFT JOIN nutritional_plan as np ON a.id = np.athlete_id LEFT JOIN routine AS r ON a.id = r.athlete_id WHERE a.trainer_id = ?",[
         req.params.id,
       ]);
     res.json(result);
@@ -37,16 +59,63 @@ export const getAthletes = async (req, res) => {
   }
 };
 
+export const getSessions = async (req, res) => {
+  try {
+    const [result] = await pool.query("SELECT s.id_training_session,  s.name, s.description, s.session_date, s.trainer_notes, r.athlete_id FROM training_session AS s JOIN routine AS r ON  s.routine_id = r.id_routine WHERE r.athlete_id = ?;", [
+      req.params.id,
+    ]);
+    if (result.length === 0) {
+      res.status(404).json({ message: "session not found" });
+    }
+
+    result.forEach((element) => {
+      element.session_date = formatDate(element.session_date);
+    });
+ 
+    res.json(result);
+  } catch (error) {
+    return res.status(500).json({ message: error.message });
+  }
+};
+
+export const getSession = async (req, res) => {
+  try {
+    const [result] = await pool.query("SELECT * FROM training_session WHERE id_training_session = ?", [
+      req.params.id,
+    ]);
+    if (result.length === 0) {
+      res.status(404).json({ message: "training session not found" });
+    }
+    
+    result[0].session_date = formatDate(result[0].session_date);
+
+    res.json(result[0]);
+  } catch (error) {
+    return res.status(500).json({ message: error.message });
+  }
+};
+//function to group by property
+function groupBy(objectArray, property) {
+  return objectArray.reduce(function (acc, obj) {
+    let key = obj[property];
+    if (!acc[key]) {
+      acc[key] = [];
+    }
+    acc[key].push(obj);
+    return acc;
+  }, {});
+}
 export const getExecutions = async (req, res) => {
   try {
-    const [result] = await pool.query("SELECT execution.*, exercise.name AS exercise_name FROM execution JOIN exercise ON execution.exercise_id = exercise.id_exercise WHERE execution.training_session_id = ?;", [
+    const [result] = await pool.query("SELECT execution.*, exercise.id_exercise as id_exercise, exercise.name AS exercise_name FROM execution JOIN exercise ON execution.exercise_id = exercise.id_exercise WHERE execution.training_session_id = ? ;", [
       req.params.id,
     ]);
     if (result.length === 0) {
       res.status(404).json({ message: "execution not found" });
     }
-    res.json(result);
-  } catch (error) {
+    res.json(groupBy(result, "exercise_name"));
+  
+   } catch (error) {
     return res.status(500).json({ message: error.message });
   }
 };
@@ -59,6 +128,11 @@ export const getAthleteMealRecords = async (req, res) => {
     if (result.length === 0) {
       res.status(404).json({ message: "meal record not found" });
     }
+
+    result.forEach((element) => {
+      element.date = formatDate(element.date);
+    });
+
     res.json(result);
   } catch (error) {
     return res.status(500).json({ message: error.message });
@@ -67,14 +141,21 @@ export const getAthleteMealRecords = async (req, res) => {
 
 export const getProgression = async (req, res) => {
   try {
-    const [result] = await pool.query("SELECT execution.*, exercise.name AS exercise_name FROM execution JOIN exercise ON execution.exercise_id = exercise.id_exercise WHERE execution.training_session_id = ? and execution.exercise_id = ? ;", [
-      req.params.sessionId,
-      req.params.exerciseId
+    const [result] = await pool.query("SELECT execution.*, exercise.name AS exercise_name, training_session.session_date AS date, routine.athlete_id FROM execution JOIN exercise ON execution.exercise_id = exercise.id_exercise JOIN training_session on execution.training_session_id = training_session.id_training_session  JOIN routine ON training_session.routine_id = routine.id_routine WHERE execution.exercise_id = ? AND routine.athlete_id = ? ORDER BY training_session.session_date DESC;", [
+      req.params.exerciseId,
+      req.params.idAthlete
     ]);
     if (result.length === 0) {
-      res.status(404).json({ message: "execution not found" });
+      res.status(404).json({ message: "execution not found"});
     }
-    res.json(result);
+
+    result.forEach((element) => {
+      element.date = formatDate(element.date);
+    });
+
+    //group by date
+    res.json(groupBy(result, "date"));
+   
   } catch (error) {
     return res.status(500).json({ message: error.message });
   }

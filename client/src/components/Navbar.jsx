@@ -14,6 +14,7 @@ function Navbar() {
         <li>
           <Link to="/new" className="bg-indigo-500 px-2 py-1 text-white w-full rounded">Create task</Link>
         </li>
+        
       </ul>
     </div>
   );
