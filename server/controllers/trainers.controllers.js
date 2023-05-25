@@ -10,6 +10,27 @@ function formatDate(date) {
   return [day, month, year].join("-");
 }
 
+//function to format date to mysql format
+function formatDateToMysql(date) {
+
+  let d = new Date(date),
+    month = "" + (d.getMonth() + 1),
+    day = "" + d.getDate(),
+    year = "" + d.getFullYear();
+  let hour = "" + d.getHours();
+  let minutes = "" + d.getMinutes();
+  let seconds = "" + d.getSeconds();
+
+  if (month.length < 2) month = "0" + month;
+  if (day.length < 2) day = "0" + day;
+  if (hour.length < 2) hour = "0" + hour;
+  if (minutes.length < 2) minutes = "0" + minutes;
+  if (seconds.length < 2) seconds = "0" + seconds;
+
+  return [year, month, day].join("-") + " " + [hour, minutes, seconds].join(":");
+}
+
+
 export const getTrainers = async (req, res) => {
   try {
     const [result] = await pool.query(
@@ -40,6 +61,7 @@ export const getTrainer = async (req, res) => {
     ]);
     if (result.length === 0) {
       res.status(404).json({ message: "trainer not found" });
+      return;
     }
     res.json(result[0]);
   } catch (error) {
@@ -66,6 +88,7 @@ export const getSessions = async (req, res) => {
     ]);
     if (result.length === 0) {
       res.status(404).json({ message: "session not found" });
+      return;
     }
 
     result.forEach((element) => {
@@ -85,6 +108,7 @@ export const getSession = async (req, res) => {
     ]);
     if (result.length === 0) {
       res.status(404).json({ message: "training session not found" });
+      return;
     }
     
     result[0].session_date = formatDate(result[0].session_date);
@@ -112,6 +136,7 @@ export const getExecutions = async (req, res) => {
     ]);
     if (result.length === 0) {
       res.status(404).json({ message: "execution not found" });
+      return;
     }
     res.json(groupBy(result, "exercise_name"));
   
@@ -126,13 +151,14 @@ export const getAthleteMealRecords = async (req, res) => {
       req.params.athleteId,
     ]);
     if (result.length === 0) {
-      res.status(404).json({ message: "meal record not found" });
+      res.status(404).json({ message: "athlete not found" });
+      return;
     }
 
     result.forEach((element) => {
       element.date = formatDate(element.date);
+      
     });
-
     res.json(result);
   } catch (error) {
     return res.status(500).json({ message: error.message });
@@ -147,6 +173,7 @@ export const getProgression = async (req, res) => {
     ]);
     if (result.length === 0) {
       res.status(404).json({ message: "execution not found"});
+      return;
     }
 
     result.forEach((element) => {
@@ -222,8 +249,16 @@ export const createRoutine = async (req, res) => {
 export const createSession = async (req, res) => {
   try {
     let session = {...req.body};
-    session.routine_id = req.params.routineId;
+    
+    
+
+    session.routine_id = parseInt(session.routine_id);
+    session.session_date = formatDateToMysql(session.session_date);
+
+    console.log(session);
+
     const { name, description, session_date, trainer_notes, routine_id} = session;
+
     const [result] = await pool.query(
       "INSERT INTO training_session (name, description, session_date, trainer_notes, routine_id) VALUES (?, ?, ?, ?, ?)",
       [name, description, session_date, trainer_notes, routine_id]
@@ -252,13 +287,12 @@ export const updateTrainer = async (req, res) => {
 
 export const updateSession = async (req, res) => {
   try {
-    const result = await pool.query("UPDATE training_session SET name = ?, description = ?, session_date = ?, trainer_notes = ?  WHERE id_training_session = ? and routine_id = ?", [
+    const result = await pool.query("UPDATE training_session SET name = ?, description = ?, session_date = ?, trainer_notes = ?  WHERE id_training_session = ?", [
       req.body.name,
       req.body.description,
-      req.body.session_date,
+      formatDateToMysql(req.body.session_date),
       req.body.trainer_notes,
       req.params.sessionId,
-      req.params.routineId
     ]);
     res.json(result);
   } catch (error) {
@@ -274,6 +308,7 @@ export const deleteTrainer = async (req, res) => {
 
     if (result.affectedRows === 0) {
       res.status(404).json({ message: "trainer not found" });
+      return;
     }
     return res.sendStatus(204);
   } catch (error) {
@@ -289,6 +324,7 @@ export const deleteTrainerAthlete = async (req, res) => {
 
     if (result.affectedRows === 0) {
       res.status(404).json({ message: "athlete not found" });
+      return;
     }
     return res.sendStatus(204);
   } catch (error) {
@@ -303,6 +339,7 @@ export const deleteRoutine = async (req, res) => {
 
     if (result.affectedRows === 0) {
       res.status(404).json({ message: "routine not found" });
+      return;
     }
     return res.sendStatus(204);
   } catch (error) {
@@ -312,13 +349,13 @@ export const deleteRoutine = async (req, res) => {
 
 export const deleteSession= async (req, res) => {
   try {
-    const [result] = await pool.query("DELETE FROM training_session WHERE id_training_session = ? and routine_id = ?", [
+    const [result] = await pool.query("DELETE FROM training_session WHERE id_training_session = ?", [
       req.params.sessionId,
-      req.params.routineId
     ]);
 
     if (result.affectedRows === 0) {
       res.status(404).json({ message: "training session not found" });
+      return;
     }
     return res.sendStatus(204);
   } catch (error) {

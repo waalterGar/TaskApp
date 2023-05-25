@@ -37,11 +37,11 @@ router.post("/trainers/:id/athletes", createTrainerAthlete);
 
 router.post("/trainers/:id/athletes/:athleteId/routines", createRoutine);
 
-router.post("/routines/:routineId/sessions", createSession)
+router.post("/sessions", createSession)
 //-------------------PUT-------------------//
 router.put("/trainers/:id", updateTrainer);
 
-router.put("/routines/:routineId/sessions/:sessionId", updateSession);
+router.put("/sessions/:sessionId", updateSession);
 
 //------------------DELETE-------------------//
 router.delete("/trainers/:id", deleteTrainer);
@@ -50,6 +50,6 @@ router.delete("/trainers/:id/athletes/:athleteId", deleteTrainerAthlete);
 
 router.delete("/trainers/:id/athletes/:athleteId/routines/:routineId", deleteRoutine);
 
-router.delete("/routines/:routineId/sessions/:sessionId/", deleteSession);
+router.delete("/sessions/:sessionId", deleteSession);
 
 export default router;

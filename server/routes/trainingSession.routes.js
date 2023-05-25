@@ -7,9 +7,8 @@ router.get("/sessions", getSessions);
 
 router.get("/sessions/:id", getSession);
 
-router.post("/sessions", createSession);
+//router.post("/sessions", createSession);
 
-router.put("/sessions/:id", updateSession);
 
 router.delete("/sessions/:id", deleteSession);
 

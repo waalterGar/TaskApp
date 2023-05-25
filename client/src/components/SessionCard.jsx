@@ -15,13 +15,13 @@ function SessionCard({ session, athlete}) {
         <h2 className="text-sm ">{session.session_date}</h2>
     </div>
     <div className="w-1/4 justify-center items-center px-4">
-        <h2 className="text-sm ">{session.description}</h2>
-        
+        <h2 className="text-sm ">{session.description}</h2>    
     </div>
-    <div className="w-1/4  flex justify-center items-center px-4">
-        <h2 className="text-sm ">{session.trainer_notes}</h2>  
-    </div> 
+    <div className="w-1/4 justify-center items-center px-4">
+        <h2 className="text-sm ">{session.description}</h2>    
+    </div>
 </div>
+
   );
 }
 

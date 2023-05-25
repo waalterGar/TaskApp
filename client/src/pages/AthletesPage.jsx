@@ -1,13 +1,16 @@
 import { useEffect, useState } from "react";
+import { useParams, useNavigate } from "react-router-dom";
 import TaskCard from "../components/AthleteCard";
 import TitleHeader from "../components/TitleHeader";
 import { useAthletes } from "../context/AthleteProvider";
 
 function AthletesPage() {
   const { athletes, loadAthletes } = useAthletes();
+  const params = useParams();
+  const navigate = useNavigate();
 
   useEffect(() => {
-    loadAthletes()
+    loadAthletes(params.id)
   }, []);
 
   function renderMain() {

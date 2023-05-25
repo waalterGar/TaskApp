@@ -2,7 +2,7 @@ import { Router } from 'express';
 import {getDietitians, getDietitian, createDietitian, updateDietitian, deleteDietitian,
     getAthletes, addAthlete, deleteAthlete, getAthlete, createNutritionalPlan, 
     createMeal, editMeal, deleteMeal, addMealRecord, editMealRecord, 
-    deleteMealRecord, getProgression, getAthleteMealRecords, getMeals} from "../controllers/dietitian.controlllers.js";
+    deleteMealRecord, getProgression, getAthleteMealRecords, getMeals, getMeal} from "../controllers/dietitian.controlllers.js";
 
 const router = Router();
 
@@ -20,6 +20,8 @@ router.get("/sessions/:sessionId/executions/:exerciseId", getProgression);
 router.get("/athletes/:athleteId/mealRecords", getAthleteMealRecords);
 
 router.get("/dietitians/:id/meals", getMeals)
+
+router.get("/dietitians/:dietitianId/meals/:mealId", getMeal)
 //-------------------POST-------------------//
 router.post("/dietitians", createDietitian);
 

@@ -53,13 +53,29 @@ export const getAthlete = async (req, res) => {
 export const getMeals = async (req, res) => {
   try {
     const [result] = await pool.query(
-      "SELECT name, description, recipe, calories, protein, carbohydrates, fat, dietitian_id FROM meal WHERE dietitian_id = ?",[
+      "SELECT id_meal, name, description, recipe, calories, protein, carbohydrates, fat, dietitian_id FROM meal WHERE dietitian_id = ?",[
         req.params.id
       ]);
     res.json(result);
   } catch (error) {
     return res.status(500).json({ message: error.message });
   }
+};
+
+export const getMeal = async (req, res) => {
+  try {
+    const [result] = await pool.query(
+      "SELECT id_meal, name, description, recipe, calories, protein, carbohydrates, fat FROM meal WHERE id_meal = ? and dietitian_id = ?",[
+        req.params.mealId,
+        req.params.dietitianId
+      ]);
+      if (result.length === 0) {
+        res.status(404).json({ message: "meal not found" });
+      }
+      res.json(result[0]);
+    } catch (error) {
+      return res.status(500).json({ message: error.message });
+    }
 };
 
 export const getProgression = async (req, res) => {

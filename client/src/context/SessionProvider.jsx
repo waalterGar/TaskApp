@@ -1,6 +1,7 @@
 import { useContext, useState } from "react";
 import {
-  getAthleteSessionsRequest, getSessionRequest
+  getAthleteSessionsRequest, getSessionRequest, 
+  createSessionRequest, updateSessionRequest
 } from "../api/trainer.api";
 import { SessionContext } from "./SessionContext";
 
@@ -30,12 +31,33 @@ export const SessionContextProvider = ({ children }) => {
     }
   }
 
+  const updateSession = async (id, session) => {
+    try {
+      const response = await updateSessionRequest(id, session);
+      console.log(response);
+    } catch (error) {
+      console.error(error);
+    }
+  };
+
+  const createSession = async (session, idRoutine) => {
+    try {
+      session.routine_id = idRoutine;
+      const response = await createSessionRequest(session);
+      console.log(response);
+    } catch (error) {
+      console.error(error);
+    }
+  };
+
     return (
     <SessionContext.Provider
       value={{
         sessions,
         loadSessions, 
-        getSession
+        getSession,
+        createSession, 
+        updateSession
       }}
     >
       {children}

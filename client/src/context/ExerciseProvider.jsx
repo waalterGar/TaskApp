@@ -13,8 +13,8 @@ export const useExercises = () => {
 export const ExerciseContextProvider = ({ children }) => {
   const [exercises, setExercises] = useState([]);
 
-  async function loadExercises() {
-    const response = await getExercisesRequest();
+  async function loadExercises(id) {
+    const response = await getExercisesRequest(id);
     setExercises(response.data);
   }
 

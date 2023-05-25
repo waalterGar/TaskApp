@@ -1,12 +1,20 @@
 import { useEffect, useState } from "react";
+import { useParams, useNavigate } from "react-router-dom";
 import ExerciseCard from "../components/ExerciseCard";
 import { useExercises } from "../context/ExerciseProvider";
 
-function AthletesPage() {
+function ExerciseListPage() {
   const { exercises, loadExercises } = useExercises();
+  const params = useParams();
+  const navigate = useNavigate();
 
   useEffect(() => {
-    loadExercises()
+    const loadExercise = async () => {
+      if (params.id) {
+        const exercises = await loadExercises(params.id);
+      }
+    };
+    loadExercise();
   }, []);
 
   function renderMain() {
@@ -34,4 +42,4 @@ function AthletesPage() {
   );
 }
 
-export default AthletesPage;
+export default ExerciseListPage;

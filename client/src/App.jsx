@@ -9,6 +9,7 @@ import { ExecutionContextProvider } from "./context/ExecutionProvider";
 import { ExerciseProgressionContextProvider } from "./context/ExerciseProgressionProvider";
 import {ExerciseContextProvider} from "./context/ExerciseProvider";
 import {MealPlanContextProvider} from "./context/MealPlanProvider";
+import { MealContextProvider } from "./context/MealProvider";
 import Navbar from "./components/Navbar";
 import AthletesPage from "./pages/AthletesPage";
 import SessionsPage from "./pages/SessionsPage";
@@ -16,6 +17,9 @@ import ExecutionPage from "./pages/ExecutionPage";
 import ExerciseProgressionPage from "./pages/ExerciseProgressionPage";
 import ExercisePage from "./pages/ExerciseListPage";
 import MealPlanPage from "./pages/MealPlanPage";
+import MealListPage from "./pages/MealListPage";
+import MealDetailPage from "./pages/MealDetailPage";
+import SessionForm from "./pages/SessionForm";
 
 function App() {
   return (
@@ -32,13 +36,15 @@ function App() {
       </TaskContextProvider>
       <AthleteContextProvider>
         <Routes>
-          <Route path="/athletes" element={<AthletesPage />} />
+          <Route path="/trainers/:id/athletes" element={<AthletesPage />} />
           </Routes>
       </AthleteContextProvider>
       <AthleteContextProvider>
       <SessionContextProvider>
         <Routes>
           <Route path="/athlete/:id/sessions/" element={<SessionsPage />} />
+          <Route path="/sessions/:id/edit/" element={<SessionForm />} />
+          <Route path="/routines/:idRoutine/sessions/new/" element={<SessionForm />} />
           </Routes>
       </SessionContextProvider>
       </AthleteContextProvider>
@@ -58,7 +64,7 @@ function App() {
       </ExerciseProgressionContextProvider>
       <ExerciseContextProvider>
         <Routes>
-          <Route path="/exercises" element={<ExercisePage />} />
+          <Route path="/trainer/:id/exercises" element={<ExercisePage />} />
           </Routes>
       </ExerciseContextProvider>
       <AthleteContextProvider>
@@ -68,6 +74,16 @@ function App() {
           </Routes>
       </MealPlanContextProvider>
       </AthleteContextProvider>
+      <MealContextProvider>
+        <Routes>
+          <Route path="/dietitians/:id/meals" element={<MealListPage />} />
+          </Routes>
+      </MealContextProvider>
+      <MealContextProvider>
+        <Routes>
+          <Route path="/dietitians/:id/meals/:idMeal" element={<MealDetailPage />} />
+          </Routes>
+      </MealContextProvider>
         </div>
         <footer className=" fixed bottom-0 bg-black-800 text-white py-4 px-6">
       <div className="container mx-auto flex justify-between items-center space-x-10">

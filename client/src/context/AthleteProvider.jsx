@@ -15,9 +15,13 @@ export const useAthletes = () => {
 export const AthleteContextProvider = ({ children }) => {
   const [athletes, setAthletes] = useState([]);
 
-  async function loadAthletes() {
-    const response = await getAthletesRequests();
+  async function loadAthletes(id) {
+    try {
+    const response = await getAthletesRequests(id);
     setAthletes(response.data);
+  } catch (error) {
+    console.error(error);
+  }
   }
 
   const getAthlete = async (id) => {
