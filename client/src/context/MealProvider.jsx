@@ -1,6 +1,6 @@
 import { useContext, useState } from "react";
 import {
-  getMealsRequest,getMealRequest
+  getMealsRequest, getMealRequest, updateMealRequest, createMealRequest
 } from "../api/dietitian.api";
 import { MealContext } from "./MealContext";
 
@@ -27,7 +27,28 @@ export const MealContextProvider = ({ children }) => {
       } catch (error) {
         console.error(error);
       }
+  }
+
+  const updateMeal = async (id, exercise) => {
+    try {
+      const response = await updateMealRequest(id, exercise);
+      console.log(response);
+    } catch (error) {
+      console.error(error);
     }
+  };
+
+  const createMeal = async (meal, idDietitian) => {
+    try {
+      //make a copy of idDietitian parsed to integer
+      let parsed_idDietitian = parseInt(idDietitian);
+      meal.dietitian_id = parsed_idDietitian;
+      const response = await createMealRequest(meal);
+      console.log(response);
+    } catch (error) {
+      console.error(error);
+    }
+  };
     
 
     return (
@@ -35,7 +56,9 @@ export const MealContextProvider = ({ children }) => {
       value={{
         meals,
         loadMeals, 
-        getMeal
+        getMeal,
+        updateMeal,
+        createMeal
       }}
     >
       {children}

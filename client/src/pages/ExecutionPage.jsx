@@ -25,7 +25,8 @@ function ExecutionPage() {
       if (params.id) {
        
         const session = await getSession(params.id);
-        const executions = await loadExecutions(params.id);   
+        const executions = await loadExecutions(params.id);
+        console.log("usefect", executions);
         setSession({
           name: session.name,
           description: session.description,
@@ -51,10 +52,9 @@ function ExecutionPage() {
         {keys.map((exercise) => {
           return (
             <div  className="grid-cols-2 m-1 flex">
-              <ExecutionCard execution={exercise} params={params} />
+              <ExecutionCard exercise={exercise} exerciseId={executions[exercise][0].exercise_id} params={params} />
               <div className="grid grid-cols-1 gap-1 ">
                 {executions[exercise].map((execution) => (
-                  console.log(execution),
                   <ExecutionItem execution={execution} key={execution.id_execution}/>
                 ))}
               </div>
@@ -67,7 +67,7 @@ function ExecutionPage() {
 
   return (
     <div>
-      <TitleHeader title="Execution" btntext={"Add Execution"}/>
+      <TitleHeader title="Execution" btntext={"Add Execution"} btnlink={`/trainer/${params.idTrainer}/sessions/${params.id}/executions/new`}/>
       {renderHeader()}
       <div className="text-white px-40 flex"> 
         <div className="w-1/4">Exercise</div>

@@ -1,6 +1,7 @@
 import { useContext, useState } from "react";
 import {
-  getAthletesRequests, getAthleteRequest
+  getAthletesRequests, getAthleteRequest,
+  addAthleteRequest, getAllAthletesRequest
 } from "../api/trainer.api";
 import { AthleteContext } from "./AthleteContext";
 
@@ -33,12 +34,29 @@ export const AthleteContextProvider = ({ children }) => {
     }
   };
 
+  const getAllAthletes = async () => {
+      const response = await getAllAthletesRequest();
+      setAthletes(response.data);
+  };
+
+  const addAthlete = async (athleteId, idTrainer) => {
+    try {
+      const response = await addAthleteRequest(athleteId, idTrainer);
+      setAthletes([...athletes, response.data]);
+    } catch (error) {
+      console.error(error);
+    }
+  };
+
+
   return (
     <AthleteContext.Provider
       value={{
         athletes,
         loadAthletes,
-        getAthlete
+        getAthlete,
+        addAthlete,
+        getAllAthletes
       }}
     >
       {children}

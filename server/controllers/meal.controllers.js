@@ -55,18 +55,3 @@ export const updateMeal = async (req, res) => {
     return res.status(500).json({ message: error.message });
   }
 };
-
-export const deleteMeal = async (req, res) => {
-  try {
-    const [result] = await pool.query("DELETE FROM meal WHERE id_meal = ?", [
-      req.params.id,
-    ]);
-
-    if (result.affectedRows === 0) {
-      res.status(404).json({ message: "meal not found" });
-    }
-    return res.sendStatus(204);
-  } catch (error) {
-    return res.status(500).json({ message: error.message });
-  }
-};

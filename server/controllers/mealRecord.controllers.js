@@ -13,7 +13,7 @@ export const getMealRecords = async (req, res) => {
 
 export const getMealRecord = async (req, res) => {
   try {
-    const [result] = await pool.query("SELECT * FROM meal_record WHERE id_meal_record = ?", [
+    const [result] = await pool.query("SELECT record.*, meal.name as meal_name FROM meal_record as record JOIN meal ON meal.id_meal=record.meal_id WHERE record.id_meal_record = ?", [
       req.params.id,
     ]);
     if (result.length === 0) {
@@ -27,6 +27,7 @@ export const getMealRecord = async (req, res) => {
 
 export const createMealRecord = async (req, res) => {
   try {
+    console.log(req.body);
     const { date, quantity, eaten, meal_id, nutritional_plan_id } = req.body;
     const [result] = await pool.query(
       "INSERT INTO meal_record (date, quantity, eaten, meal_id, nutritional_plan_id ) VALUES (?, ?, ?, ?, ?)",
@@ -47,8 +48,9 @@ export const createMealRecord = async (req, res) => {
 
 export const updateMealRecord = async (req, res) => {
   try {
-    const result = await pool.query("UPDATE meal_record SET ? WHERE id_meal_record = ?", [
-      req.body,
+    const result = await pool.query("UPDATE meal_record SET quantity = ?, date = ? WHERE id_meal_record = ?", [
+      req.body.quantity,
+      req.body.date,
       req.params.id,
     ]);
     res.json(result);

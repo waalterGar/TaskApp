@@ -44,7 +44,7 @@ function SessionsPage() {
     console.log(sessions);
     return sessions.map((session) => (
       <div className="flex">
-        <SessionCard session={session} athlete={athlete} key={session.id} />
+        <SessionCard session={session} athlete={athlete} key={session.id} trainerId={params.idTrainer} />
         <EditButton btnlink={`/sessions/${session.id_training_session}/edit/`} />
         <DeleteButton id={session.id_training_session} deleteSubject={"session"} />
       </div>
@@ -56,7 +56,7 @@ function SessionsPage() {
       <TitleHeader
         title="Routine"
         btntext={"Add Session"}
-        btnlink={`/routines/${params.id}/sessions/new/`}
+        btnlink={`/routines/${params.idRoutine}/sessions/new/`}
       />
       {renderHeader()}
       <div className="text-white px-40 flex">

@@ -7,7 +7,7 @@ router.get("/executions", getExecutions);
 
 router.get("/executions/:id", getExecution);
 
-router.post("/executions", createExecution);
+//router.post("/executions", createExecution);
 
 router.put("/executions/:id", updateExecution);
 

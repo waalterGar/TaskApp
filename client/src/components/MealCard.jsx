@@ -1,8 +1,7 @@
-import { useMealPlans } from "../context/MealPlanProvider";
+import {  useMealRecords } from "../context/MealRecordProvider";
 import { useNavigate } from "react-router-dom";
 
 function MealCard({ meal }) {
-  const {} = useMealPlans();
   const navigate = useNavigate();
  
   return (

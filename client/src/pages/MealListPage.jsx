@@ -3,6 +3,8 @@ import { useParams, useNavigate } from "react-router-dom";
 import MealItem from "../components/MealItem";
 import TitleHeader from "../components/TitleHeader";
 import { useMeals } from "../context/MealProvider";
+import EditButton from "../components/EditButton";
+import DeleteButton from "../components/DeleteButton";
 
 function MealListPage() {
   const { meals, loadMeals } = useMeals();
@@ -16,15 +18,23 @@ function MealListPage() {
   function renderMain() {
     if (meals.length === 0) return <h1>No meals yet</h1>;
     console.log(meals);
-    return meals.map((meal) => <MealItem meal={meal} params={params} key={meal.id_exercise} />);
+    return meals.map((meal) => (
+      <div>
+        <MealItem meal={meal} params={params} key={meal.id_meal} />
+        <EditButton btnlink={`/dietitians/${params.id}/meals/${meal.id_meal}/edit`}/>
+        <DeleteButton deleteSubject={"meal"} id={meal.id_meal}/>
+      </div>
+    ));
   }
 
   return (
     <div>
-      <TitleHeader title="My meals"  btntext={"+ Add Meal"}/>
-      <div className="grid grid-cols-3 gap-1.5 px-20">
-         {renderMain()}
-      </div> 
+      <TitleHeader
+        title="My meals"
+        btntext={"+ Add Meal"}
+        btnlink={`/dietitians/${params.id}/meals/new`}
+      />
+      <div className="grid grid-cols-3 gap-1.5 px-20">{renderMain()}</div>
     </div>
   );
 }

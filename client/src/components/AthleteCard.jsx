@@ -1,7 +1,7 @@
 import { useAthletes } from "../context/AthleteProvider";
 import { useNavigate } from "react-router-dom";
 
-function AthleteCard({ athlete }) {
+function AthleteCard({ athlete, trainerId }) {
   const { deleteTask, toggleTask } = useAthletes();
   const navigate = useNavigate();
   const handleDone = async () => {
@@ -19,7 +19,7 @@ function AthleteCard({ athlete }) {
         <h2 className="text-sm font-bold">{athlete.phone_num}</h2>
         <h2 className="text-sm font-bold">{athlete.email}</h2>
     </div>
-    <div className="w-1/4  flex justify-center items-center px-4"  onClick={() => navigate(`/athlete/${athlete.id}/sessions/`)}>
+    <div className="w-1/4  flex justify-center items-center px-4"  onClick={() => navigate(`/trainers/${trainerId}/routines/${athlete.id_routine}/athlete/${athlete.id}/sessions/`)}>
     {renderRoutine(athlete.routine_name)}
     </div>
     <div className="w-1/4  flex justify-center items-center px-4">
