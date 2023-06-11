@@ -2,7 +2,7 @@ import { Router } from 'express';
 import {getDietitians, getDietitian, createDietitian, updateDietitian, deleteDietitian,
     getAthletes, addAthlete, deleteAthlete, getAthlete, createNutritionalPlan, 
     createMeal, editMeal, deleteMeal, addMealRecord, editMealRecord, 
-    deleteMealRecord, getProgression, getAthleteMealRecords, getMeals, getMeal} from "../controllers/dietitian.controlllers.js";
+    deleteMealRecord, getProgression, getAthleteMealRecords, getMeals, getMeal, dietitianRegister, dietitianLogin} from "../controllers/dietitian.controlllers.js";
 
 const router = Router();
 
@@ -30,6 +30,10 @@ router.post("/dietitians/:dietitianId/athletes/:athleteId/plans", createNutritio
 router.post("/dietitians/:dietitianId/meals", createMeal);
 
 router.post("/plans/:planId/mealRecords", addMealRecord);
+
+router.post("/dietitian/login", dietitianLogin);
+
+router.post("/dietitian/register", dietitianRegister);
 //-------------------PUT-------------------//
 router.put("/dietitians/:id", updateDietitian);
 

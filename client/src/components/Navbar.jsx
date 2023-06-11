@@ -1,6 +1,15 @@
-import { Link } from "react-router-dom";
+import { Link} from "react-router-dom";
+import { Button } from "@mui/material";
+import { useNavigate } from "react-router-dom";
+import { useLocation } from "react-router-dom";
 
 function Navbar() {
+  const navigate = useNavigate();
+  const location = useLocation();
+  console.log('location:', location);
+  if (location.pathname === '/login' || location.pathname === '/register') {
+    return null;
+  }
   return (
     <div className="bg-black flex justify-between px-20 py-4">
       <Link to="/trainers/6/athletes" className="text-white font-bold"> 
@@ -9,10 +18,10 @@ function Navbar() {
 
       <ul className="flex gap-x-1">
         <li>
-          <Link to="/" className="bg-slate-200 px-2 py-1 text-black w-full rounded">Home</Link>
-        </li>
-        <li>
-          <Link to="/new" className="bg-indigo-500 px-2 py-1 text-white w-full rounded">Create task</Link>
+          <Button className="px-5 py-1 text-white w-full" onClick={() => {
+                  localStorage.clear()
+                    navigate(`/login`);
+                }}>Log out</Button>
         </li>
         
       </ul>

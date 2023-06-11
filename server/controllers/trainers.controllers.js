@@ -1,4 +1,5 @@
 import { pool } from "../db.js";
+import  bcrypt  from 'bcryptjs'
 
 function formatDate(date) {
   let d = new Date(date),
@@ -355,6 +356,53 @@ export const addTrainerAthlete = async (req, res) => {
     return res.status(500).json({ message: error.message });
   }
 };
+
+export const trainerLogin = async (req, res) => {
+  try {
+    console.log("trainer:", req.body);
+    const { email, password } = req.body;
+    let hashedPassword = await bcrypt.hash(password, 8);
+    const result = await pool.query("SELECT name FROM trainer WHERE email = ? AND password = ?", [
+      email,
+      hashedPassword
+    ]);
+    if (result.length > 0) {
+      res.json(result[0]);
+    } else {
+      res.status(404).json({ message: "User not found" });
+    }
+  } catch (error) {
+    return res.status(500).json({ message: error.message });
+  }
+};
+
+export const trainerRegister = async (req, res) => {
+  try {
+    console.log("trainer Register:", req.body);
+    const { name, email, password, phone_num, birth_date, gender } = req.body;
+    let hashedPassword = await bcrypt.hash(password, 8);
+
+    const [result] = await pool.query("INSERT INTO trainer(name, email, password, phone_num, birth_date, gender) VALUES (?, ?, ?, ?, ?, ?)", [
+      name,
+      email,
+      hashedPassword,
+      phone_num,
+      birth_date,
+      gender
+    ]);
+    console.log(result);
+    res.json({
+      id: result.insertId,
+      name,
+      email,
+      birth_date 
+    });
+  } catch (error) {
+    return res.status(500).json({ message: error.message });
+  }
+};
+    
+
 
 export const deleteTrainerAthlete = async (req, res) => {
   try {

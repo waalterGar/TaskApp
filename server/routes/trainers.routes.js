@@ -7,7 +7,7 @@ import { getTrainers, getTrainer, getAthletes, createTrainer,
     getSessions, getTrainerExercises, getSession, getExercise, 
     createExercise, updateExercise, deleteExercise, createExecution, 
     addTrainerAthlete, deleteTrainerAthlete, createMeal, 
-    updateMeal, deleteMeal} from "../controllers/trainers.controllers.js";
+    updateMeal, deleteMeal, trainerLogin, trainerRegister} from "../controllers/trainers.controllers.js";
 
 const router = Router();
 
@@ -49,6 +49,10 @@ router.post("/exercises", createExercise);
 router.post("/executions", createExecution);
 
 router.post("/meals", createMeal);
+
+router.post("/trainer/login", trainerLogin);
+
+router.post("/trainer/register", trainerRegister);
 //-------------------PUT-------------------//
 router.put("/trainers/:id", updateTrainer);
 

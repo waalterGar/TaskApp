@@ -25,11 +25,13 @@ import ExecutionForm from "./pages/ExecutionForm";
 import AthleteForm from "./pages/AthleteForm";
 import MealForm from "./pages/MealForm";
 import MealRecordForm from "./pages/MealRecordForm";
+import LoginForm from "./pages/LoginForm";
+import RegisterForm from "./pages/RegisterForm";
 
 function App() {
   return (
       <div className="bg-zinc-900 h-screen">
-        <Navbar />
+        <Navbar /> 
         <div className="container mx-auto py-4 px-20">
         <TaskContextProvider> 
         <Routes>
@@ -37,6 +39,8 @@ function App() {
           <Route path="/new" element={<TaskForm />} />
           <Route path="/edit/:id" element={<TaskForm />} />
           <Route path="*" element={<NotFound />} />
+          <Route path="/login" element={<LoginForm />} />
+          <Route path="/register" element={<RegisterForm />} />
         </Routes>
       </TaskContextProvider>
       <AthleteContextProvider>

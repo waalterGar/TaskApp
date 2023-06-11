@@ -56,6 +56,18 @@ export const updateExecution = async (req, res) => {
   }
 };
 
+export const setCompleted = async (req, res) => {
+
+  try {
+    const result = await pool.query("UPDATE execution SET done = 1 WHERE id_execution = ?", [
+      req.params.id,
+    ]);
+    res.json(result);
+  } catch (error) {
+    return res.status(500).json({ message: error.message });
+  }
+};
+
 export const deleteExecution = async (req, res) => {
   try {
     const [result] = await pool.query("DELETE FROM execution WHERE id_execution = ?", [
