@@ -51,7 +51,8 @@ export const createExerciseRequest = async (exercise) =>
 export const createExecutionRequest = async (execution) =>
   await axios.post(`http://localhost:4000/executions`, execution);
 
-
+export const loginTrainerRequest = async (trainer) =>
+  await axios.post(`http://localhost:4000/trainer/login`, trainer);
 //-------------------PUT-------------------//
 
 export const updateSessionRequest = async (id, session) =>

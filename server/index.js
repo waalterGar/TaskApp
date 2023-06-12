@@ -1,5 +1,6 @@
 import express  from 'express';
 import cors from 'cors';
+import session from "express-session";
 import {dirname, join} from 'path';
 import { fileURLToPath } from 'url';
 import { PORT } from './config.js';
@@ -19,6 +20,12 @@ import mealRecordRoutes from './routes/mealRecord.routes.js';
 
 const app = express();
 const _dirname = dirname(fileURLToPath(import.meta.url));
+
+app.use(session({
+	secret: 'secret',
+	resave: true,
+	saveUninitialized: true
+}));
 
 app.use(cors());
 app.use(express.json());

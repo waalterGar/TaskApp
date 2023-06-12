@@ -19,6 +19,8 @@ export const createMealRequest = async (meal) =>
 export const createRecordRequest = async (record) =>
   await axios.post(`http://localhost:4000/mealRecords`, record);
 
+export const loginDietitianRequest = async (dietitian) =>
+  await axios.post(`http://localhost:4000/dietitian/login`, dietitian);
 // -------------------PUT-------------------//
   export const updateMealRequest = async (id, meal) =>
   await axios.put(`http://localhost:4000/meals/${id}`, meal);

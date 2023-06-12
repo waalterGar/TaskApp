@@ -3,11 +3,14 @@ import { Grid, Container, Paper, Avatar, Typography, TextField, Button, CssBasel
 import { LockOutlined as LockOutlinedIcon } from '@mui/icons-material'
 import axios from 'axios'
 import { useNavigate } from 'react-router'
-
+import { loginTrainerRequest } from '../api/trainer.api'
+import { loginDietitianRequest } from '../api/dietitian.api'
+import { useAuth } from '../context/AuthProvider'
 
 const LoginForm = () => {
   const [body, setBody] = useState({ email: "", password: "" });
   const navigate = useNavigate();
+  const { dispatch } = useAuth();
 
   const inputChange = ({ target }) => {
     const { name, value } = target;
@@ -17,33 +20,23 @@ const LoginForm = () => {
     });
   };
 
-  const onSubmit = () => {
+  const onSubmit = async () => {
+    console.log("onsubmit", body);
+    let response = null;
     if (body.role === "trainer") {
-    axios
-      .post("http://localhost:4000/trainer/login", body)
-      .then(({ data }) => {
-        localStorage.setItem("auth", '"yes"');
-        localStorage.setItem("role", body.role);
-        navigate("/");
-      })
-      .catch(({ response }) => {
-        console.log(response.data);
-      });
+      response = await loginTrainerRequest(body);
     }
     if (body.role === "dietitian") {
-      axios
-        .post("http://localhost:4000/dietitian/login", body)
-        .then(({ data }) => {
-          localStorage.setItem("auth", '"yes"');
-          localStorage.setItem("role", body.role);
-          navigate("/");
-        })
-        .catch(({ response }) => {
-          console.log(response.data);
-        });
-      }
-  };
-
+      response = await loginDietitianRequest(body);
+    }
+    if (response.status === 202) {
+      console.log("response", response);
+      const data = response.data;
+      localStorage.setItem("user", JSON.stringify(data));
+      dispatch({ type: "LOGIN", payload: data });
+    }
+    console.log("submited");
+  }
   return (
     <Grid container component="main" >
       <CssBaseline />

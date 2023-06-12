@@ -15,9 +15,11 @@ import {
 import { LockOutlined as LockOutlinedIcon } from "@mui/icons-material";
 import axios from "axios";
 import { useNavigate } from "react-router";
+import { useAuth } from "../context/AuthProvider";
 
 const LoginForm = () => {
   const [body, setBody] = useState({ email: "", password: "" });
+  const { dispatch } = useAuth();
   const navigate = useNavigate();
   
   const inputChange = ({ target }) => {
@@ -34,9 +36,7 @@ const LoginForm = () => {
     axios
       .post("http://localhost:4000/trainer/register", body)
       .then(({ data }) => {
-        localStorage.setItem("auth", '"yes"');
-        localStorage.setItem("role", "trainer");
-        navigate("/");
+        navigate("/login");
       })
       .catch(({ response }) => {
         console.log(response.data);
@@ -47,9 +47,8 @@ const LoginForm = () => {
         axios
         .post("http://localhost:4000/dietitian/register", body)
         .then(({ data }) => {
-            localStorage.setItem("auth", '"yes"');
-            localStorage.setItem("role", "trainer");
-            navigate("/");
+           
+            navigate("/login");
         })
         .catch(({ response }) => {
             console.log(response.data);

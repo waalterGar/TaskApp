@@ -1,5 +1,16 @@
 import { pool } from "../db.js";
 import bcrypt from "bcryptjs";
+import jwt from "jsonwebtoken";
+import { SECRET } from "../config.js";
+
+const createToken = (id) => {
+  console.log("createToken", id);
+  try {
+    return jwt.sign({ id: id }, SECRET, { expiresIn: 60 * 60 });
+  } catch (error) {
+    console.log(error);
+  }
+};
 
 export const getDietitians = async (req, res) => {
   try {
@@ -214,14 +225,21 @@ export const dietitianLogin = async (req, res) => {
     const { email, password } = req.body;
     let hashedPassword = await bcrypt.hash(password, 8);
     const result = await pool.query(
-      "SELECT name, password FROM dietitian WHERE email = ?",
+      "SELECT dietitian_id, name, password FROM dietitian WHERE email = ?",
       [email, hashedPassword]
     );
-    
-    if (result[0].length > 0 && await bcrypt.compare(password, result[0][0].password)) {
-      req.session.loggedin = true;
-      console.log("password match");
-      res.json(result[0].name);
+
+    if (
+      result[0].length > 0 &&
+      (await bcrypt.compare(password, result[0][0].password))
+    ) {
+      console.log("LOGGED");
+      console.log("loged id:", result[0][0].dietitian_id);
+
+      const token = createToken(result[0][0].dietitian_id);
+      console.log("token:", token);
+
+      res.status(202).json({ email, token });
     } else {
       console.log("NOT LOGGED");
       res.status(404).json({ message: "User not found" });
@@ -236,18 +254,21 @@ export const dietitianRegister = async (req, res) => {
     console.log("dietitian Register:", req.body);
     const { name, email, password, phone_num, birth_date, gender } = req.body;
     let hashedPassword = await bcrypt.hash(password, 8);
-
     const [result] = await pool.query(
       "INSERT INTO dietitian (name, email, password, phone_num, birth_date, gender) VALUES (?, ?, ?, ?, ?, ?)",
       [name, email, hashedPassword, phone_num, birth_date, gender]
     );
-    console.log(result);
-    res.json({
-      id: result.insertId,
-      name,
-      email,
-      birth_date,
-    });
+
+    const [id] = await pool.query(
+      "SELECT dietitian_id FROM dietitian WHERE email = ? AND password = ?;",
+      [email, hashedPassword]
+    );
+    console.log("id:", id[0].dietitian_id);
+
+    const token = createToken(id[0].dietitian_id);
+    console.log("token:", token);
+
+    res.status(202).json({ email, token });
   } catch (error) {
     return res.status(500).json({ message: error.message });
   }
