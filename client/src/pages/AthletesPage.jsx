@@ -4,15 +4,21 @@ import AthleteCard from "../components/AthleteCard";
 import TitleHeader from "../components/TitleHeader";
 import { useAthletes } from "../context/AthleteProvider";
 import DeleteButton from "../components/DeleteButton";
+import { useAuth } from "../context/AuthProvider";
 
 function AthletesPage() {
   const { athletes, loadAthletes } = useAthletes();
   const params = useParams();
   const navigate = useNavigate();
-
+  const { user } = useAuth();
+  console.log("user", user);
+ 
   useEffect(() => {
-    loadAthletes(params.id);
-  }, []);
+    const fetchAthletes = async () => {
+        const athletes= await loadAthletes(params.id, user.token);
+    };
+    fetchAthletes();
+  }, [user]);
 
   function renderMain() {
     if (athletes.length === 0) return <h1>No athletes yet</h1>;

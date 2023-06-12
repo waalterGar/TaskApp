@@ -2,6 +2,7 @@ import { Form, Formik } from "formik";
 import {  useExercises } from "../context/ExerciseProvider";
 import { useParams, useNavigate } from "react-router-dom";
 import { useEffect, useState } from "react";
+import { useAuth } from "../context/AuthProvider";
 
 function ExerciseForm() {
   const { getExercise,createExercise,updateExercise } = useExercises();
@@ -12,11 +13,12 @@ function ExerciseForm() {
   }); 
   const params = useParams();
   const navigate = useNavigate();
+  const {user} = useAuth();
 
   useEffect( () => {
     const loadExercise = async () => {
       if (params.id) {
-        const exercise = await getExercise(params.id);
+        const exercise = await getExercise(params.id, user.token);
         console.log("usefect",exercise);
         setExercise({
             name: exercise.name,
@@ -26,7 +28,7 @@ function ExerciseForm() {
       }
     };
     loadExercise();
-  }, []);
+  }, [user]);
   return (
     <div className="">
       <Formik
@@ -35,11 +37,11 @@ function ExerciseForm() {
         onSubmit={async (values, actions) => {
           console.log(values, params);
           if(params.id){
-            await updateExercise(params.id, values);
+            await updateExercise(params.id, values, user.token);
         } 
         
           if (params.idTrainer) {
-            await createExercise(values, params.idTrainer);
+            await createExercise(values, params.idTrainer, user.token);
         }
 
         setExercise({

@@ -7,6 +7,7 @@ import { useParams, useNavigate } from "react-router-dom";
 import { useSessions } from "../context/SessionProvider";
 import { useAthletes } from "../context/AthleteProvider";
 import DeleteButton from "../components/DeleteButton";
+import { useAuth } from "../context/AuthProvider";
 
 function SessionsPage() {
   const { sessions, loadSessions } = useSessions();
@@ -21,17 +22,18 @@ function SessionsPage() {
   });
   const params = useParams();
   const navigate = useNavigate();
+  const { user } = useAuth();
 
   useEffect(() => {
     const loadSession = async () => {
       if (params.id) {
-        const sessions = await loadSessions(params.id);
-        const athlete = await getAthlete(params.id);
+        const sessions = await loadSessions(params.id, user.token);
+        const athlete = await getAthlete(params.id , user.token);
         setAthlete(athlete);
       }
     };
     loadSession();
-  }, []);
+  }, [user]);
 
   function renderHeader() {
     if (athlete.length === 0) return <h1>No athletes yet</h1>;

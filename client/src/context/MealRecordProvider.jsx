@@ -16,42 +16,42 @@ export const useMealRecords = () => {
 export const MealRecordContextProvider = ({ children }) => {
   const [mealRecords, setMealRecords] = useState([]);
 
-  async function loadMealRecords(id) {
-    const response = await getAthleteMealRecordsRequest(id);
+  async function loadMealRecords(id, token) {
+    const response = await getAthleteMealRecordsRequest(id, token);
     setMealRecords(response.data);
   }
 
-  async function getRecord(id) {
+  async function getRecord(id, token) {
     try {
       console.log("getRecord",id);
-      const response = await getRecordRequest(id);
+      const response = await getRecordRequest(id, token);
       return response.data;
     } catch (error) {
       console.error(error);
     }
   }
-  const updateRecord = async (id, record) => {
+  const updateRecord = async (id, record, token) => {
     try {
-      const response = await updateRecordRequest(id, record);
+      const response = await updateRecordRequest(id, record, token);
       console.log(response);
     } catch (error) {
       console.error(error);
     }
   };
   
-  const createRecord= async (record) => {
+  const createRecord= async (record, token) => {
     try {
       console.log("parsed", record);
-      const response = await createRecordRequest(record);
+      const response = await createRecordRequest(record, token);
       console.log(response);
     } catch (error) {
       console.error(error);
     }
   };
 
-  const deleteRecord = async (id) => {
+  const deleteRecord = async (id, token) => {
     try {
-      const response = await deleteRecordRequest(id);
+      const response = await deleteRecordRequest(id, token);
       console.log(response);
     } catch (error) {
       console.error(error);

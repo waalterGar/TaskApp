@@ -16,32 +16,33 @@ export const useAthletes = () => {
 export const AthleteContextProvider = ({ children }) => {
   const [athletes, setAthletes] = useState([]);
 
-  async function loadAthletes(id) {
+  async function loadAthletes(id, token) {
+    console.log("loadAthletes", id, token);
     try {
-    const response = await getAthletesRequests(id);
+    const response = await getAthletesRequests(id, token);
     setAthletes(response.data);
   } catch (error) {
     console.error(error);
   }
   }
 
-  const getAthlete = async (id) => {
+  const getAthlete = async (id, token) => {
     try {
-      const response = await getAthleteRequest(id);
+      const response = await getAthleteRequest(id, token);
       return response.data;
     } catch (error) {
       console.error(error);
     }
   };
 
-  const getAllAthletes = async () => {
-      const response = await getAllAthletesRequest();
+  const getAllAthletes = async (token) => {
+      const response = await getAllAthletesRequest(token);
       setAthletes(response.data);
   };
 
-  const addAthlete = async (athleteId, idTrainer) => {
+  const addAthlete = async (athleteId, idTrainer, token) => {
     try {
-      const response = await addAthleteRequest(athleteId, idTrainer);
+      const response = await addAthleteRequest(athleteId, idTrainer, token);
       setAthletes([...athletes, response.data]);
     } catch (error) {
       console.error(error);

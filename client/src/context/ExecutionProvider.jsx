@@ -13,35 +13,35 @@ export const useExecutions = () => {
   return context;
 };
 
-async function getExercises(id) {
+async function getExercises(id, token) {
   console.log("getExercises",id);
   try {
-    const response = await getExercisesRequest(id);
+    const response = await getExercisesRequest(id, token);
     return response.data;
   } catch (error) {
     console.error(error);
   }
 }
 
-async function getExecution(id) {
+async function getExecution(id, token) {
   try {
     console.log("getExecution",id);
-    const response = await getExecutionRequest(id);
+    const response = await getExecutionRequest(id, token);
     return response.data;
   } catch (error) {
     console.error(error);
   }
 }
-const updateExecution = async (id, exercise) => {
+const updateExecution = async (id, exercise, token) => {
   try {
-    const response = await updateExecutionRequest(id, exercise);
+    const response = await updateExecutionRequest(id, exercise, token);
     console.log(response);
   } catch (error) {
     console.error(error);
   }
 };
 
-const createExecution = async (execution) => {
+const createExecution = async (execution, token) => {
   try {
 
     //copy execution to avoid mutating the original object
@@ -55,7 +55,7 @@ const createExecution = async (execution) => {
     execution.training_session_id = parseInt(execution.training_session_id);
 
     console.log("parsed", execution);
-    const response = await createExecutionRequest(execution);
+    const response = await createExecutionRequest(execution, token);
     console.log(response);
   } catch (error) {
     console.error(error);
@@ -65,8 +65,8 @@ const createExecution = async (execution) => {
 export const ExecutionContextProvider = ({ children }) => {
   const [executions, setExecutions] = useState([]);
 
-  async function loadExecutions() {
-    const response = await getExecutionsRequest();
+  async function loadExecutions(token) {
+    const response = await getExecutionsRequest(token);
     setExecutions(response.data);
   }
 

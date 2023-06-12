@@ -6,7 +6,7 @@ import SessionHeader from "../components/SessionHeader";
 import TitleHeader from "../components/TitleHeader";
 import { useExecutions } from "../context/ExecutionProvider";
 import { useSessions } from "../context/SessionProvider";
-
+import { useAuth } from "../context/AuthProvider";
 
 function ExecutionPage() {
   const { executions, loadExecutions } = useExecutions();
@@ -19,13 +19,14 @@ function ExecutionPage() {
   const {getSession} = useSessions();
   const params = useParams();
   const navigate = useNavigate();
+  const {user} = useAuth();
   
   useEffect( () => {
     const loadExecution = async () => {
       if (params.id) {
        
-        const session = await getSession(params.id);
-        const executions = await loadExecutions(params.id);
+        const session = await getSession(params.id, user.token);
+        const executions = await loadExecutions(params.id, user.token);
         console.log("usefect", executions);
         setSession({
           name: session.name,
@@ -36,7 +37,7 @@ function ExecutionPage() {
       }
     };
     loadExecution();
-  }, []);
+  }, [user]);
 
   function renderHeader() {
     if (session.length === 0) return <h1>No sessions yet</h1>;

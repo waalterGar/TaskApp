@@ -13,8 +13,8 @@ export const useExerciseProgression = () => {
 export const ExerciseProgressionContextProvider = ({ children }) => {
   const [exercises, setExercises] = useState([]);
 
-  async function loadExerciseProgression(idAthlete,id) {
-    const response = await getExerciseProgressionRequest(idAthlete,id);
+  async function loadExerciseProgression(idAthlete,id, token) {
+    const response = await getExerciseProgressionRequest(idAthlete,id, token);
     setExercises(response.data);
   }
 

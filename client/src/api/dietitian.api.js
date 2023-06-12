@@ -1,35 +1,68 @@
 import axios from "axios";
 
 // -------------------GET-------------------//
-export const getMealsRequest = async (id) =>
-  await axios.get(`http://localhost:4000/dietitians/${id}/meals`);
+export const getMealsRequest = async (id, token) =>
+  await axios.get(`http://localhost:4000/dietitians/${id}/meals`,{
+    headers: {
+      Authorization: `Bearer ${token}`}
+   });
  
-export const getMealRequest = async (id, idMeal) =>
-  await axios.get(`http://localhost:4000/dietitians/${id}/meals/${idMeal}`);
+export const getMealRequest = async (id, idMeal, token) =>
+  await axios.get(`http://localhost:4000/dietitians/${id}/meals/${idMeal}`,{
+    headers: {
+      Authorization: `Bearer ${token}`}
+   });
 
-export const getMealRecordRequest = async (id) =>
-  await axios.get(`http://localhost:4000/mealRecords/${id}`);
+export const getMealRecordRequest = async (id, token) =>
+  await axios.get(`http://localhost:4000/mealRecords/${id}`,{
+    headers: {
+      Authorization: `Bearer ${token}`}
+   });
 
-export const getRecordRequest = async (id) =>
-  await axios.get(`http://localhost:4000/mealRecords/${id}`);
+export const getRecordRequest = async (id, token) =>
+  await axios.get(`http://localhost:4000/mealRecords/${id}`,{
+    headers: {
+      Authorization: `Bearer ${token}`}
+   });
 // -------------------POST-------------------//
-export const createMealRequest = async (meal) =>
-  await axios.post(`http://localhost:4000/meals`, meal);
+export const createMealRequest = async (meal, token) =>
+  await axios.post(`http://localhost:4000/meals`, meal,{
+    headers: {
+      Authorization: `Bearer ${token}`}
+   });
 
-export const createRecordRequest = async (record) =>
-  await axios.post(`http://localhost:4000/mealRecords`, record);
+export const createRecordRequest = async (record, token) =>
+  await axios.post(`http://localhost:4000/mealRecords`, record, {
+    headers: {
+      Authorization: `Bearer ${token}`}
+   });
 
-export const loginDietitianRequest = async (dietitian) =>
-  await axios.post(`http://localhost:4000/dietitian/login`, dietitian);
+export const loginDietitianRequest = async (dietitian, token) =>
+  await axios.post(`http://localhost:4000/dietitian/login`, dietitian ,{
+    headers: {
+      Authorization: `Bearer ${token}`}
+   });
 // -------------------PUT-------------------//
-  export const updateMealRequest = async (id, meal) =>
-  await axios.put(`http://localhost:4000/meals/${id}`, meal);
+  export const updateMealRequest = async (id, meal, token) =>
+  await axios.put(`http://localhost:4000/meals/${id}`, meal ,{
+    headers: {
+      Authorization: `Bearer ${token}`}
+   });
 
-  export const updateRecordRequest = async (id, record) =>
-  await axios.put(`http://localhost:4000/mealRecords/${id}`, record);
+  export const updateRecordRequest = async (id, record, token) =>
+  await axios.put(`http://localhost:4000/mealRecords/${id}`, record, {
+    headers: {
+      Authorization: `Bearer ${token}`}
+   });
 // ------------------DELETE-------------------//
-export const deleteMealRequest = async (id) =>
-  await axios.delete(`http://localhost:4000/meals/${id}`);
+export const deleteMealRequest = async (id, token) =>
+  await axios.delete(`http://localhost:4000/meals/${id}`,{
+    headers: {
+      Authorization: `Bearer ${token}`}
+   });
   
-export const deleteRecordRequest = async (id) =>
-  await axios.delete(`http://localhost:4000/mealRecords/${id}`);
+export const deleteRecordRequest = async (id, token) =>
+  await axios.delete(`http://localhost:4000/mealRecords/${id}`,{
+    headers: {
+      Authorization: `Bearer ${token}`}
+   });

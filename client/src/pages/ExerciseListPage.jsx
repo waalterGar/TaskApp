@@ -5,21 +5,23 @@ import { useExercises } from "../context/ExerciseProvider";
 import TitleHeader from "../components/TitleHeader";
 import DeleteButton from "../components/DeleteButton";
 import EditButton from "../components/EditButton";
+import { useAuth } from "../context/AuthProvider";
 
 function ExerciseListPage() {
   const { exercises, loadExercises } = useExercises();
   const params = useParams();
   const navigate = useNavigate();
+  const { user } = useAuth();
 
   useEffect(() => {
     const loadExercise = async () => {
       if (params.id) {
-        const exercises = await loadExercises(params.id);
+        const exercises = await loadExercises(params.id, user.token);
         console.log("usefect", exercises);
       }
     };
     loadExercise();
-  }, []);
+  }, [user]);
 
   function renderMain() {
     if (exercises.length === 0) return <h1>No exercises yet</h1>;

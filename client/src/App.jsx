@@ -1,8 +1,5 @@
 import { Route, Routes } from "react-router-dom";
-import TasksPage from "./pages/TasksPage";
-import TaskForm from "./pages/TaskForm";
 import NotFound from "./pages/NotFound";
-import { TaskContextProvider } from "./context/TaskProvider";
 import { AthleteContextProvider } from "./context/AthleteProvider";
 import { SessionContextProvider } from "./context/SessionProvider";
 import { ExecutionContextProvider } from "./context/ExecutionProvider";
@@ -27,22 +24,19 @@ import MealForm from "./pages/MealForm";
 import MealRecordForm from "./pages/MealRecordForm";
 import LoginForm from "./pages/LoginForm";
 import RegisterForm from "./pages/RegisterForm";
+import MainPage from "./pages/MainPage";
 
 function App() {
   return (
       <div className="bg-zinc-900 h-screen">
         <Navbar /> 
         <div className="container mx-auto py-4 px-20">
-        <TaskContextProvider> 
         <Routes>
-          <Route path="/" element={<TasksPage />} />
-          <Route path="/new" element={<TaskForm />} />
-          <Route path="/edit/:id" element={<TaskForm />} />
+          <Route path="/" element={<MainPage />} />
           <Route path="*" element={<NotFound />} />
           <Route path="/login" element={<LoginForm />} />
           <Route path="/register" element={<RegisterForm />} />
         </Routes>
-      </TaskContextProvider>
       <AthleteContextProvider>
         <Routes>
           <Route path="/trainers/:id/athletes" element={<AthletesPage />} />

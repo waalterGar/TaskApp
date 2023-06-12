@@ -4,6 +4,7 @@ import { useEffect, useState } from "react";
 import { useMealRecords } from "../context/MealRecordProvider";
 import { useMeals } from "../context/MealProvider";
 import MealSelector from "../components/MealSelector";
+import { useAuth } from "../context/AuthProvider";
 
 function MealRecordForm() {
   const { getRecord, updateRecord, createRecord } = useMealRecords();
@@ -15,19 +16,20 @@ function MealRecordForm() {
     eaten: false,
     mealName: "",
   });
-
   const params = useParams();
   const navigate = useNavigate();
+  const { user } = useAuth();
+
   useEffect(() => {
     const loadMeal = async () => {
       if (params.idDietitian) {
-        const meals = await loadMeals(params.idDietitian);
+        const meals = await loadMeals(params.idDietitian, user.token);
       }
     };
     const loadRecord = async () => {
       console.log(params);
       if (params.idMealRecord && !params.idDietitian) {
-        const record = await getRecord(params.idMealRecord);
+        const record = await getRecord(params.idMealRecord, user.token);
         console.log("usefect", record);
         setMealRecord({
           meal_id: record.meal_id,
@@ -40,7 +42,7 @@ function MealRecordForm() {
     };
     loadRecord();
     loadMeal();
-  }, []);
+  }, [user]);
 
   const handleSelectMeal = (mealId) => {
     //handle change
@@ -83,12 +85,12 @@ function MealRecordForm() {
         onSubmit={async (values, actions) => {
           console.log(values, params);
           if (params.idMealRecord && !params.idDietitian) {
-            await updateRecord(params.idMealRecord, values);
+            await updateRecord(params.idMealRecord, values, user.token);
           }
 
           if (params.idDietitian && params.idMealPlan) {
             values.nutritional_plan_id = params.idMealPlan;
-            await createRecord(values);
+            await createRecord(values, user.token);
           }
 
           setMealRecord({

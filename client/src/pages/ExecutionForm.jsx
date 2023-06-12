@@ -4,6 +4,7 @@ import { useParams, useNavigate } from "react-router-dom";
 import { useEffect, useState } from "react";
 import { useExercises } from "../context/ExerciseProvider";
 import ExerciseSelector from "../components/ExerciseSelector";
+import { useAuth } from "../context/AuthProvider";
 
 function ExecutionForm() {
   const { getExecution, createExecution, updateExecution } = useExecutions();
@@ -19,16 +20,18 @@ function ExecutionForm() {
 
   const params = useParams();
   const navigate = useNavigate();
+  const {user} = useAuth();
+
   useEffect(() => {
     const loadExercise = async () => {
       if (params.id) {
-        const exercises = await loadExercises(params.idTrainer);
+        const exercises = await loadExercises(params.idTrainer, user.token);
       }
     };
     const loadExecution = async () => {
       console.log(params);
       if (params.id && !params.idTrainer) {
-        const execution = await getExecution(params.id);
+        const execution = await getExecution(params.id, user.token);
         console.log("usefect", execution);
         setExecution({
           num_set: execution.num_set,
@@ -42,7 +45,7 @@ function ExecutionForm() {
     };
     loadExecution();
     loadExercise();
-  }, []);
+  }, [user]);
 
   const handleSelectExercise = (exerciseId) => {
     //handle change
@@ -66,12 +69,12 @@ function ExecutionForm() {
         onSubmit={async (values, actions) => {
           console.log(values, params);
           if (params.id) {
-            await updateExecution(params.id, values);
+            await updateExecution(params.id, values, user.token);
           }
 
           if (params.idTrainer) {
             values.training_session_id = params.id;
-            await createExecution(values);
+            await createExecution(values, user.token);
           }
 
           setExecution({

@@ -13,35 +13,35 @@ export const useExercises = () => {
 export const ExerciseContextProvider = ({ children }) => {
   const [exercises, setExercises] = useState([]);
 
-  async function loadExercises(id) {
+  async function loadExercises(id, token) {
     console.log("loadExercises",id);
-    const response = await getExercisesRequest(id);
+    const response = await getExercisesRequest(id, token);
     console.log("loadExercises",response);
     setExercises(response.data);
   }
 
-  async function getExercise(id) {
+  async function getExercise(id, token) {
     try {
       console.log("getExercise",id);
-      const response = await getExerciseRequest(id);
+      const response = await getExerciseRequest(id, token);
       return response.data;
     } catch (error) {
       console.error(error);
     }
   }
-  const updateExercise = async (id, exercise) => {
+  const updateExercise = async (id, exercise, token) => {
     try {
-      const response = await updateExerciseRequest(id, exercise);
+      const response = await updateExerciseRequest(id, exercise, token);
       console.log(response);
     } catch (error) {
       console.error(error);
     }
   };
 
-  const createExercise = async (exercise, idTrainer) => {
+  const createExercise = async (exercise, idTrainer, token) => {
     try {
       exercise.trainer_id = idTrainer;
-      const response = await createExerciseRequest(exercise);
+      const response = await createExerciseRequest(exercise, token);
       console.log(response);
     } catch (error) {
       console.error(error);

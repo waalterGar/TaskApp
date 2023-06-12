@@ -3,14 +3,19 @@ import { useParams, useNavigate } from "react-router-dom";
 import ExerciseProgressionCard from "../components/ExerciseProgressionCard";
 import ExerciseProgressionItem from "../components/ExerciseProgressionItem";
 import { useExerciseProgression } from "../context/ExerciseProgressionProvider";
+import { useAuth } from "../context/AuthProvider";
 function ExerciseProgressionPage() {
   const { exercises, loadExerciseProgression } = useExerciseProgression();
   const params = useParams();
   const navigate = useNavigate();
+  const { user } = useAuth();
 
   useEffect(() => {
-    loadExerciseProgression(params.idAthlete, params.id);
-  }, []);
+    const fetch = async () => {
+     const progressions = await loadExerciseProgression(params.idAthlete, params.id, user.token);
+      };
+    fetch();
+  }, [user]);
 
   function renderMain() {
     if (exercises.length === 0) return <h1>No exercises yet</h1>;

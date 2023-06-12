@@ -71,6 +71,7 @@ export const getTrainer = async (req, res) => {
 };
 
 export const getAthletes = async (req, res) => {
+  console.log("getAthletes", req.headers.authorization);
   try {
     const [result] = await pool.query(
       "SELECT a.id, a.name, a.email, a.phone_num, a.birth_date, a.gender, a.height, a.weight, np.id_nutritional_plan, np.name as nutritional_plan_name, r.name as routine_name, r.id_routine FROM athlete as a LEFT JOIN nutritional_plan as np ON a.id = np.athlete_id LEFT JOIN routine AS r ON a.id = r.athlete_id WHERE a.trainer_id = ?",[

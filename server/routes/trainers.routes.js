@@ -1,15 +1,41 @@
-import { Router } from 'express';
-import { getTrainers, getTrainer, getAthletes, createTrainer, 
-    updateTrainer, deleteTrainer, createTrainerAthlete, 
-    createRoutine, deleteRoutine,
-    createSession, updateSession, deleteSession,
-    getExecutions, getAthleteMealRecords, getProgression, 
-    getSessions, getTrainerExercises, getSession, getExercise, 
-    createExercise, updateExercise, deleteExercise, createExecution, 
-    addTrainerAthlete, deleteTrainerAthlete, createMeal, 
-    updateMeal, deleteMeal, trainerLogin, trainerRegister} from "../controllers/trainers.controllers.js";
+import { Router } from "express";
+import {
+  getTrainers,
+  getTrainer,
+  getAthletes,
+  createTrainer,
+  updateTrainer,
+  deleteTrainer,
+  createTrainerAthlete,
+  createRoutine,
+  deleteRoutine,
+  createSession,
+  updateSession,
+  deleteSession,
+  getExecutions,
+  getAthleteMealRecords,
+  getProgression,
+  getSessions,
+  getTrainerExercises,
+  getSession,
+  getExercise,
+  createExercise,
+  updateExercise,
+  deleteExercise,
+  createExecution,
+  addTrainerAthlete,
+  deleteTrainerAthlete,
+  createMeal,
+  updateMeal,
+  deleteMeal,
+  trainerLogin,
+  trainerRegister,
+} from "../controllers/trainers.controllers.js";
+
 
 const router = Router();
+
+
 
 //-------------------GET-------------------//
 
@@ -25,7 +51,10 @@ router.get("/sessions/:id", getSession);
 
 router.get("/sessions/:id/executions", getExecutions);
 
-router.get("/athletes/:idAthlete/exercises/:exerciseId/progression", getProgression);
+router.get(
+  "/athletes/:idAthlete/exercises/:exerciseId/progression",
+  getProgression
+);
 
 router.get("/exercises/:id", getExercise);
 
@@ -42,7 +71,7 @@ router.post("/trainers/:id/athletes", createTrainerAthlete);
 
 router.post("/trainers/:id/athletes/:athleteId/routines", createRoutine);
 
-router.post("/sessions", createSession)
+router.post("/sessions", createSession);
 
 router.post("/exercises", createExercise);
 
@@ -68,7 +97,10 @@ router.put("/meals/:id", updateMeal);
 //------------------DELETE-------------------//
 router.delete("/trainers/:id", deleteTrainer);
 
-router.delete("/trainers/:id/athletes/:athleteId/routines/:routineId", deleteRoutine);
+router.delete(
+  "/trainers/:id/athletes/:athleteId/routines/:routineId",
+  deleteRoutine
+);
 
 router.delete("/sessions/:sessionId", deleteSession);
 

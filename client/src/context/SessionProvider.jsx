@@ -16,34 +16,34 @@ export const useSessions = () => {
 export const SessionContextProvider = ({ children }) => {
   const [sessions, setSessions] = useState([]);
 
-  async function loadSessions(id) {
-    const response = await getAthleteSessionsRequest(id);
+  async function loadSessions(id, token) {
+    const response = await getAthleteSessionsRequest(id, token);
     setSessions(response.data);
   }
 
-  async function getSession(id) {
+  async function getSession(id, token) {
     try {
       console.log("getSession",id);
-      const response = await getSessionRequest(id);
+      const response = await getSessionRequest(id, token);
       return response.data;
     } catch (error) {
       console.error(error);
     }
   }
 
-  const updateSession = async (id, session) => {
+  const updateSession = async (id, session, token) => {
     try {
-      const response = await updateSessionRequest(id, session);
+      const response = await updateSessionRequest(id, session, token);
       console.log(response);
     } catch (error) {
       console.error(error);
     }
   };
 
-  const createSession = async (session, idRoutine) => {
+  const createSession = async (session, idRoutine, token) => {
     try {
       session.routine_id = idRoutine;
-      const response = await createSessionRequest(session);
+      const response = await createSessionRequest(session, token);
       console.log(response);
     } catch (error) {
       console.error(error);

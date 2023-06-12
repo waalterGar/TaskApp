@@ -2,6 +2,7 @@ import { Form, Formik } from "formik";
 import { useMeals } from "../context/MealProvider";
 import { useParams, useNavigate } from "react-router-dom";
 import { useEffect, useState } from "react";
+import { useAuth } from "../context/AuthProvider";
 
 function MealForm() {
   const { getMeal, updateMeal, createMeal } = useMeals();
@@ -16,12 +17,13 @@ function MealForm() {
   });
   const params = useParams();
   const navigate = useNavigate();
+  const { user } = useAuth();
 
   useEffect(() => {
     const loadMeal = async () => {
         console.log("params", params);
       if (params.id) {
-        const meal = await getMeal(params.idDietitian, params.id);
+        const meal = await getMeal(params.idDietitian, params.id, user.token);
         console.log("usefect", meal);
         setMeal({
           name: meal.name,
@@ -35,7 +37,7 @@ function MealForm() {
       }
     };
     loadMeal();
-  }, []);
+  }, [user]);
   return (
     <div className="">
       <Formik
@@ -45,11 +47,11 @@ function MealForm() {
           console.log(values, params);
 
           if (params.idDietitian && !params.id) {
-            await createMeal(values, params.idDietitian);
+            await createMeal(values, params.idDietitian, user.token);
           }
 
           if (params.id) {
-            await updateMeal(params.id, values);
+            await updateMeal(params.id, values, user.token);
           }
           
           setExercise({

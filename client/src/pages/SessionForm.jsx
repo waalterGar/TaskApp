@@ -2,6 +2,7 @@ import { Form, Formik } from "formik";
 import {  useSessions } from "../context/SessionProvider";
 import { useParams, useNavigate } from "react-router-dom";
 import { useEffect, useState } from "react";
+import { useAuth } from "../context/AuthProvider";
 
 function SessionForm() {
   const { createSession, getSession, updateSession } = useSessions();
@@ -13,11 +14,12 @@ function SessionForm() {
   }); 
   const params = useParams();
   const navigate = useNavigate();
+  const { user } = useAuth();
 
   useEffect( () => {
     const loadSession = async () => {
       if (params.id) {
-        const session = await getSession(params.id);
+        const session = await getSession(params.id, user.token);
         console.log("usefect",session);
         setSession({
             name: session.name,
@@ -28,7 +30,7 @@ function SessionForm() {
       }
     };
     loadSession();
-  }, []);
+  }, [user]);
   return (
     <div className="">
       <Formik
@@ -37,12 +39,12 @@ function SessionForm() {
         onSubmit={async (values, actions) => {
           console.log(values, params);
           if(params.id){
-            await updateSession(params.id, values);
+            await updateSession(params.id, values, user.token);
             navigate("/");
         } 
         
           if (params.idRoutine) {
-            await createSession(values, params.idRoutine);
+            await createSession(values, params.idRoutine, user.token);
         }
 
         setSession({

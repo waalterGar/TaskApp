@@ -5,15 +5,20 @@ import TitleHeader from "../components/TitleHeader";
 import { useMeals } from "../context/MealProvider";
 import EditButton from "../components/EditButton";
 import DeleteButton from "../components/DeleteButton";
+import { useAuth } from "../context/AuthProvider";
 
 function MealListPage() {
   const { meals, loadMeals } = useMeals();
   const params = useParams();
   const navigate = useNavigate();
+  const { user } = useAuth();
 
   useEffect(() => {
-    loadMeals(params.id);
-  }, []);
+    const fetchMeals = async () => {
+     const meals  =  await loadMeals(params.id, user.token);
+    };
+    fetchMeals();
+  }, [user]);
 
   function renderMain() {
     if (meals.length === 0) return <h1>No meals yet</h1>;

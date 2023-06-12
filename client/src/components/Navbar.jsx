@@ -8,7 +8,6 @@ function Navbar() {
   const navigate = useNavigate();
   const location = useLocation();
   const { user, dispatch } = useAuth();
-  console.log("user:", user);
 
   console.log("location:", location);
   if (location.pathname === "/login" || location.pathname === "/register") {
@@ -22,7 +21,8 @@ function Navbar() {
 
       <ul className="flex gap-x-1">
         {user && (
-          <li>
+          <li className="flex">
+            <span className="text-white">{user.email}</span>
             <Button
               className="px-5 py-1 text-white w-full"
               onClick={() => {

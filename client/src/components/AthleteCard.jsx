@@ -1,13 +1,9 @@
-import { useAthletes } from "../context/AthleteProvider";
 import { useNavigate } from "react-router-dom";
 
 function AthleteCard({ athlete, trainerId }) {
-  const { deleteTask, toggleTask } = useAthletes();
   const navigate = useNavigate();
-  const handleDone = async () => {
-    await toggleTask(task.id);
-  };
 
+ 
   return (
     <div className="bg-zinc-700 text-white rounded-md p-4 flex">
        

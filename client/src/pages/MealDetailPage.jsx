@@ -3,6 +3,7 @@ import { useParams, useNavigate } from "react-router-dom";
 import MealDetailCard from "../components/MealDetailCard";
 import TitleHeader from "../components/TitleHeader";
 import { useMeals } from "../context/MealProvider";
+import { useAuth } from "../context/AuthProvider";
 
 function MealDetailPage() {
   const {getMeal} = useMeals();
@@ -17,16 +18,17 @@ function MealDetailPage() {
     carbohydrates: "",
     fat: "",
   });
+  const {user} = useAuth();
 
   useEffect(() => {
     const loadSession = async () => {
         if (params.id && params.idMeal ) {
-          const meal = await getMeal(params.id, params.idMeal);
+          const meal = await getMeal(params.id, params.idMeal, user.token);
           setMeal(meal);
         }
       };
       loadSession();
-  }, []);
+  }, [user]);
 
   function renderMain() {
     if (meal.length === 0) return <h1>No meals yet</h1>;

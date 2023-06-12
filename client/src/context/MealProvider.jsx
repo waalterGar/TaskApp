@@ -15,35 +15,35 @@ export const useMeals = () => {
 export const MealContextProvider = ({ children }) => {
   const [meals, setMeals] = useState([]);
 
-  async function loadMeals(id) {
-    const response = await getMealsRequest(id);
+  async function loadMeals(id, token) {
+    const response = await getMealsRequest(id, token);
     setMeals(response.data);
   }
 
-  async function getMeal(id, idMeal) {
+  async function getMeal(id, idMeal, token) {
     try {
-        const response = await getMealRequest(id, idMeal);
+        const response = await getMealRequest(id, idMeal, token);
         return response.data;
       } catch (error) {
         console.error(error);
       }
   }
 
-  const updateMeal = async (id, exercise) => {
+  const updateMeal = async (id, exercise, token) => {
     try {
-      const response = await updateMealRequest(id, exercise);
+      const response = await updateMealRequest(id, exercise, token);
       console.log(response);
     } catch (error) {
       console.error(error);
     }
   };
 
-  const createMeal = async (meal, idDietitian) => {
+  const createMeal = async (meal, idDietitian, token) => {
     try {
       //make a copy of idDietitian parsed to integer
       let parsed_idDietitian = parseInt(idDietitian);
       meal.dietitian_id = parsed_idDietitian;
-      const response = await createMealRequest(meal);
+      const response = await createMealRequest(meal, token);
       console.log(response);
     } catch (error) {
       console.error(error);

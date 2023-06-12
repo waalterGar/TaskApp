@@ -3,7 +3,7 @@ import { useParams, useNavigate } from "react-router-dom";
 import { useEffect, useState } from "react";
 import { useAthletes } from "../context/AthleteProvider";
 import AthleteSelector from "../components/AthleteSelector";
-
+import { useAuth } from "../context/AuthProvider";
 function AthleteForm() {
   const { athletes, addAthlete, getAllAthletes } = useAthletes();
   const [athlete, setAthlete] = useState({
@@ -11,14 +11,14 @@ function AthleteForm() {
   });
   const params = useParams();
   const navigate = useNavigate();
+  const { user } = useAuth();
  
-
   useEffect(() => {
     const loadAthletes = async () => {
-      const athletes = await getAllAthletes();
+      const athletes = await getAllAthletes(user.token);
     };
     loadAthletes();
-  }, []);
+  }, [user]);
 
   const handleSelectExercise = (athleteId) => {
     //handle change
@@ -46,7 +46,7 @@ function AthleteForm() {
         onSubmit={async (values, actions) => {
           console.log("submit",athlete);
           if (athlete.id) {
-            await addAthlete(athlete.id, params.idTrainer);
+            await addAthlete(athlete.id, params.idTrainer, user.token);
           }     
         }}
       >

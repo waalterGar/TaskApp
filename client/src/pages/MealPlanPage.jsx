@@ -6,6 +6,7 @@ import { useParams, useNavigate } from "react-router-dom";
 import { useMealRecords } from "../context/MealRecordProvider";
 import { useAthletes } from "../context/AthleteProvider";
 import EditButton from "../components/EditButton";
+import { useAuth } from "../context/AuthProvider";
 
 function MealPlanPage() {
   const { mealRecords, loadMealRecords } = useMealRecords();
@@ -20,17 +21,18 @@ function MealPlanPage() {
   });
   const params = useParams();
   const navigate = useNavigate();
+  const { user } = useAuth();
 
   useEffect(() => {
     const loadMealPlan = async () => {
       if (params.id) {
-        const mealPlans = await loadMealRecords(params.id);
-        const athlete = await getAthlete(params.id);
+        const mealPlans = await loadMealRecords(params.id, user.token);
+        const athlete = await getAthlete(params.id, user.token);
         setAthlete(athlete);
       }
     };
     loadMealPlan();
-  }, []);
+  }, [user]);
 
   function renderHeader() {
     if (athlete.length === 0) return <h1>No athletes yet</h1>;
