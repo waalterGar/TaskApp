@@ -62,6 +62,7 @@ export const deleteSession= async (req, res) => {
 
     if (result.affectedRows === 0) {
       res.status(404).json({ message: "training session not found" });
+      return;
     }
     return res.sendStatus(204);
   } catch (error) {

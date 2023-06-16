@@ -9,6 +9,7 @@ import { useSessions } from "../context/SessionProvider";
 import { useAuth } from "../context/AuthProvider";
 
 function ExecutionPage() {
+  const {user} = useAuth();
   const { executions, loadExecutions } = useExecutions();
   const [session, setSession] = useState({
     name: "",
@@ -19,12 +20,13 @@ function ExecutionPage() {
   const {getSession} = useSessions();
   const params = useParams();
   const navigate = useNavigate();
-  const {user} = useAuth();
+  console.log("user", user);
   
   useEffect( () => {
+    console.log("useEffect", params);
     const loadExecution = async () => {
       if (params.id) {
-       
+        if (!user) return;
         const session = await getSession(params.id, user.token);
         const executions = await loadExecutions(params.id, user.token);
         console.log("usefect", executions);
@@ -53,10 +55,10 @@ function ExecutionPage() {
         {keys.map((exercise) => {
           return (
             <div  className="grid-cols-2 m-1 flex">
-              <ExecutionCard exercise={exercise} exerciseId={executions[exercise][0].exercise_id} params={params} />
+              <ExecutionCard exercise={exercise} exerciseId={executions[exercise][0].exercise_id} params={params}/>
               <div className="grid grid-cols-1 gap-1 ">
                 {executions[exercise].map((execution) => (
-                  <ExecutionItem execution={execution} key={execution.id_execution}/>
+                  <ExecutionItem execution={execution} key={execution.id_execution} editisabled={user?user.role==="dietitian"?true:false:false} deleteisabled={user?user.role==="dietitian"?true:false:false} />
                 ))}
               </div>
             </div>
@@ -68,7 +70,13 @@ function ExecutionPage() {
 
   return (
     <div>
-      <TitleHeader title="Execution" btntext={"Add Execution"} btnlink={`/trainer/${params.idTrainer}/sessions/${params.id}/executions/new`}/>
+      <TitleHeader
+        title="Executions"
+        btntext={"+ Add Execution"}
+        btnlink={`/sessions/${params.id}/executions/new`}
+       role={user? user.role : ""} 
+       btndisabled={user?user.role==="dietitian"?true:false:false}
+       />
       {renderHeader()}
       <div className="text-white px-40 flex"> 
         <div className="w-1/4">Exercise</div>

@@ -38,7 +38,11 @@ function MealDetailPage() {
 
   return (
     <div>
-      <TitleHeader title="Meal Details"/>
+     <TitleHeader
+        title="Meal Details"
+       role={user? user.role : ""} 
+       btndisabled={user?user.role==="trainer"?true:false:false}
+        />
          {renderMain()}
     </div> 
   );

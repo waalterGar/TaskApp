@@ -1,6 +1,7 @@
 import { useNavigate } from "react-router-dom";
 
-function EditButton({ btnlink }) {
+function EditButton({ btnlink, btndisabled}) {
+  if(btndisabled) return;
   const navigate = useNavigate();
   return (
     <div>

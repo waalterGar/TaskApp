@@ -3,7 +3,7 @@ import { useNavigate } from "react-router-dom";
 import EditButton from "./EditButton";
 import DeleteButton from "./DeleteButton";
 
-function ExecutionItem({ execution}) {
+function ExecutionItem({ execution, editisabled, deleteisabled}) {
     const { deleteTask, toggleTask } = useExecutions();
     const navigate = useNavigate();
     console.log(execution);
@@ -26,8 +26,8 @@ function ExecutionItem({ execution}) {
           <h2 className="text-sm font-bold">{execution.done == true ? "✅" : "❌"}</h2>
         </div>
         <div>
-          <EditButton btnlink={`/executions/${execution.id_execution}/edit/`} />
-          <DeleteButton id={execution.id_execution} deleteSubject={"execution"}/>
+          <EditButton btnlink={`/executions/${execution.id_execution}/edit/`}  btndisabled={editisabled}/>
+          <DeleteButton id={execution.id_execution} deleteSubject={"execution"} btndisabled={deleteisabled}/>
           </div>         
       </div>
     );

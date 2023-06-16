@@ -11,6 +11,42 @@ const LoginForm = () => {
   const [body, setBody] = useState({ email: "", password: "" });
   const navigate = useNavigate();
   const { dispatch } = useAuth();
+  const [errors, setErrors] = useState({});
+  const [helperTexts, setHelperText] = useState("");
+
+  const validate = () => {
+    let isValid = true;
+    let helpers = {};
+    let errors = {};
+
+    if(!body.role){
+      helpers.role = "This field is required.";
+      errors.role = true;
+      isValid = false;
+    }
+
+   if(!body.email){
+      helpers.email = "This field is required.";
+      errors.email = true;
+      isValid = false;
+    }
+
+    if(!body.password){
+      helpers.password = "This field is required.";
+      errors.password = true;
+      isValid = false;
+    }
+
+    setErrors({
+      ...errors
+    });
+    
+    setHelperText({ 
+      ...helpers
+    });
+
+    return isValid;
+  };
 
   const inputChange = ({ target }) => {
     const { name, value } = target;
@@ -21,8 +57,8 @@ const LoginForm = () => {
   };
 
   const onSubmit = async () => {
-    console.log("onsubmit", body);
-    let response = null;
+    if (validate()){
+      let response = null;
     if (body.role === "trainer") {
       response = await loginTrainerRequest(body);
     }
@@ -34,8 +70,9 @@ const LoginForm = () => {
       const data = response.data;
       localStorage.setItem("user", JSON.stringify(data));
       dispatch({ type: "LOGIN", payload: data });
+      navigate("/");
     }
-    console.log("submited");
+    }
   }
   return (
     <Grid container component="main" >
@@ -50,11 +87,14 @@ const LoginForm = () => {
             <LockOutlinedIcon />
           </Avatar>
           <Typography component="h1" variant="h5">
-            Sign In
+            Log In
           </Typography>
           <form >
           <InputLabel id="demo-simple-select-label">Role</InputLabel>
             <Select
+              error={errors.role}
+              helperText={helperTexts.role}
+              fullWidth
               labelId="demo-simple-select-label"
               id="demo-simple-select"
               name="role"
@@ -66,18 +106,23 @@ const LoginForm = () => {
               <MenuItem value={"trainer"}>Trainer</MenuItem>
             </Select>
             <TextField
+              helperText={helperTexts.email}
               fullWidth
               autoFocus
-              color="primary"
+              required
+              color="secondary"
               margin="normal"
               variant="outlined"
               label="Email"
               value={body.email}
               onChange={inputChange}
               name="email"
+              error={errors.email}
             />
-            <TextField
+            <TextField  
+              helperText={helperTexts.password}
               fullWidth
+              required
               type="password"
               color="primary"
               margin="normal"
@@ -86,6 +131,7 @@ const LoginForm = () => {
               value={body.password}
               onChange={inputChange}
               name="password"
+              error={errors.password}
             />
             <Button
               fullWidth

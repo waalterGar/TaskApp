@@ -15,14 +15,14 @@ function Navbar() {
   }
   return (
     <div className="bg-black flex justify-between px-20 py-4">
-      <Link to="/trainers/6/athletes" className="text-white font-bold">
+      <Link to="/" className="text-white font-bold">
         <h1>FitFuel</h1>
       </Link>
 
       <ul className="flex gap-x-1">
         {user && (
           <li className="flex">
-            <span className="text-white">{user.email}</span>
+            <span className="text-white" onClick={() => navigate("/profile")}>{user.email}</span>
             <Button
               className="px-5 py-1 text-white w-full"
               onClick={() => {

@@ -1,8 +1,30 @@
-import { Router } from 'express';
-import {getDietitians, getDietitian, createDietitian, updateDietitian, deleteDietitian,
-    getAthletes, addAthlete, deleteAthlete, getAthlete, createNutritionalPlan, 
-    createMeal, editMeal, deleteMeal, addMealRecord, editMealRecord, 
-    deleteMealRecord, getProgression, getAthleteMealRecords, getMeals, getMeal, dietitianRegister, dietitianLogin} from "../controllers/dietitian.controlllers.js";
+import { Router } from "express";
+import {
+  getDietitians,
+  getDietitian,
+  createDietitian,
+  updateDietitian,
+  deleteDietitian,
+  getAthletes,
+  addAthlete,
+  deleteAthlete,
+  getAthlete,
+  createNutritionalPlan,
+  createMeal,
+  editMeal,
+  deleteMeal,
+  addMealRecord,
+  editMealRecord,
+  deleteMealRecord,
+  getProgression,
+  getAthleteMealRecords,
+  getMeals,
+  getMeal,
+  dietitianRegister,
+  dietitianLogin,
+  addDietitianAthlete,
+  deleteDietitianAthlete
+} from "../controllers/dietitian.controlllers.js";
 
 const router = Router();
 
@@ -19,13 +41,16 @@ router.get("/sessions/:sessionId/executions/:exerciseId", getProgression);
 
 router.get("/athletes/:athleteId/mealRecords", getAthleteMealRecords);
 
-router.get("/dietitians/:id/meals", getMeals)
+router.get("/dietitians/:id/meals", getMeals);
 
-router.get("/dietitians/:dietitianId/meals/:mealId", getMeal)
+router.get("/dietitians/:dietitianId/meals/:mealId", getMeal);
 //-------------------POST-------------------//
 router.post("/dietitians", createDietitian);
 
-router.post("/dietitians/:dietitianId/athletes/:athleteId/plans", createNutritionalPlan);
+router.post(
+  "/dietitians/:dietitianId/athletes/:athleteId/plans",
+  createNutritionalPlan
+);
 
 router.post("/dietitians/:dietitianId/meals", createMeal);
 
@@ -41,7 +66,17 @@ router.put("/dietitians/:dietitianId/meals/:mealId", editMeal);
 
 router.put("/dietitians/:dietitianId/athletes/:athleteId/add", addAthlete);
 
-router.put("/dietitians/:dietitianId/athletes/:athleteId/delete", deleteAthlete);
+router.put("/athletes/:id/dietitians/:idDietitian/new", addDietitianAthlete);
+
+router.put(
+  "/athletes/:id/dietitians/:idDietitian/delete",
+  deleteDietitianAthlete
+);
+
+router.put(
+  "/dietitians/:dietitianId/athletes/:athleteId/delete",
+  deleteAthlete
+);
 
 router.put("/plans/:planId/mealRecords/:mealRecordId", editMealRecord);
 //------------------DELETE-------------------//

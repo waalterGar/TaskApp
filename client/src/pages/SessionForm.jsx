@@ -13,13 +13,14 @@ function SessionForm() {
     trainer_notes: "",
   }); 
   const params = useParams();
+  console.log(params);
   const navigate = useNavigate();
   const { user } = useAuth();
 
   useEffect( () => {
     const loadSession = async () => {
-      if (params.id) {
-        const session = await getSession(params.id, user.token);
+      if (params.idSession) {
+        const session = await getSession(params.idSession, user.token);
         console.log("usefect",session);
         setSession({
             name: session.name,
@@ -38,13 +39,14 @@ function SessionForm() {
         enableReinitialize={true}
         onSubmit={async (values, actions) => {
           console.log(values, params);
-          if(params.id){
-            await updateSession(params.id, values, user.token);
-            navigate("/");
+          if(params.idSession){
+            await updateSession(params.idSession, values, user.token);
+            navigate(`/routines/${params.idRoutine}/athlete/${params.id}/sessions/`);
         } 
-        
-          if (params.idRoutine) {
-            await createSession(values, params.idRoutine, user.token);
+  
+          else{
+            await createSession(values, params.idRoutine, user.token); 
+            navigate(`/routines/${params.idRoutine}/athlete/${params.id}/sessions/`)
         }
 
         setSession({
@@ -57,7 +59,7 @@ function SessionForm() {
       >
         {({ handleChange, handleSubmit, values, isSubmitting }) => (
           <Form onSubmit={handleSubmit} className="bg-zinc-700 text-white max-w-sm rounded-md p-4 mx-auto">
-            <h1 className="text-xl font-bold uppercase text-center">{params.id ? "Edit Session" : "New Session"}</h1>
+            <h1 className="text-xl font-bold uppercase text-center">{params.idSession ? "Edit Session" : "New Session"}</h1>
             <label className="block">name</label>
             <input
               type="text"

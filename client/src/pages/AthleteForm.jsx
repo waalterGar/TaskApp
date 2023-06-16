@@ -46,7 +46,8 @@ function AthleteForm() {
         onSubmit={async (values, actions) => {
           console.log("submit",athlete);
           if (athlete.id) {
-            await addAthlete(athlete.id, params.idTrainer, user.token);
+            await addAthlete(athlete.id, user.id, user.role,user.token);
+            navigate("/athletes");
           }     
         }}
       >

@@ -14,9 +14,10 @@ function ExerciseListPage() {
   const { user } = useAuth();
 
   useEffect(() => {
+    console.log("useEffect", params);
     const loadExercise = async () => {
-      if (params.id) {
-        const exercises = await loadExercises(params.id, user.token);
+      if (user) {
+        const exercises = await loadExercises(user.id, user.token);
         console.log("usefect", exercises);
       }
     };
@@ -44,9 +45,9 @@ function ExerciseListPage() {
     <div>
       <TitleHeader
         title="Exercises"
-        btntext={"Add Exercise"}
-        btnlink={`/trainer/${params.id}/exercises/new`}
-      />
+        btntext={"+ Add Exercise"}
+        btnlink={`/trainer/${user?user.id:""}/exercises/new`}
+        role={user? user.role : ""} />
 
       <div className="text-white px-40 flex">
         <div className="w-1/3">Name</div>

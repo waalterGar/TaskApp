@@ -24,6 +24,14 @@ export const getRecordRequest = async (id, token) =>
     headers: {
       Authorization: `Bearer ${token}`}
    });
+
+  export const getDietitianAthletesRequest = async (id, token) =>
+   await axios.get(`http://localhost:4000/dietitians/${id}/athletes`, {
+     headers: {
+       Authorization: `Bearer ${token}`}
+    });
+
+
 // -------------------POST-------------------//
 export const createMealRequest = async (meal, token) =>
   await axios.post(`http://localhost:4000/meals`, meal,{
@@ -42,6 +50,7 @@ export const loginDietitianRequest = async (dietitian, token) =>
     headers: {
       Authorization: `Bearer ${token}`}
    });
+
 // -------------------PUT-------------------//
   export const updateMealRequest = async (id, meal, token) =>
   await axios.put(`http://localhost:4000/meals/${id}`, meal ,{
@@ -54,6 +63,18 @@ export const loginDietitianRequest = async (dietitian, token) =>
     headers: {
       Authorization: `Bearer ${token}`}
    });
+
+  export const addDietitianAthleteRequest = async (id, idDietitian, token) =>
+   await axios.put(`http://localhost:4000/athletes/${id}/dietitians/${idDietitian}/new`,null, {
+     headers: {
+       Authorization: `Bearer ${token}`}
+    });
+
+    export const deleteDietitianAthlete = async (id, idDietitian, token) =>
+    await axios.put(`http://localhost:4000/athletes/${id}/dietitians/${idDietitian}/delete`,null, {
+      headers: {
+        Authorization: `Bearer ${token}`}
+     });
 // ------------------DELETE-------------------//
 export const deleteMealRequest = async (id, token) =>
   await axios.delete(`http://localhost:4000/meals/${id}`,{

@@ -1,5 +1,19 @@
 import { pool } from "../db.js";
 import  bcrypt  from 'bcryptjs'
+import jwt from "jsonwebtoken";
+import { SECRET } from "../config.js";
+
+//import all validations from "../validations/validations.js"
+import { validateId, validateRoutine, validateSession, validateExercise, validateTrainer, validateMeal } from "../validation/validation.js";
+
+const createToken = (id) => {
+  console.log("createToken", id);
+  try {
+    return jwt.sign({ id: id }, SECRET, { expiresIn: 60 * 60 });
+  } catch (error) {
+    console.log(error);
+  }
+};
 
 function formatDate(date) {
   let d = new Date(date),
@@ -11,7 +25,6 @@ function formatDate(date) {
   return [day, month, year].join("-");
 }
 
-//function to format date to mysql format
 function formatDateToMysql(date) {
 
   let d = new Date(date),
@@ -37,6 +50,10 @@ export const getTrainers = async (req, res) => {
     const [result] = await pool.query(
       "SELECT * FROM trainer"
     );
+    if (result.length === 0) {
+      res.status(404).json({ message: "trainers not found" });
+      return;
+    }
     res.json(result);
   } catch (error) {
     return res.status(500).json({ message: error.message });
@@ -44,11 +61,17 @@ export const getTrainers = async (req, res) => {
 };
 
 export const getTrainerExercises = async (req, res) => {
+  console.log("getTrainerExercises", req.params);
+  //validateid and return if invalid
   try {
     const [result] = await pool.query(
       "SELECT * FROM exercise WHERE trainer_id = ?",
       [req.params.id]
     );
+    if (result.length === 0) {
+      res.status(404).json({ message: "exercises not found" });
+      return;
+    }
     res.json(result);
   } catch (error) {
     return res.status(500).json({ message: error.message });
@@ -56,6 +79,8 @@ export const getTrainerExercises = async (req, res) => {
 };
 
 export const getTrainer = async (req, res) => {
+  const  error  = validateId(req.params.id);
+  if (error) return res.status(400).json(error);
   try {
     const [result] = await pool.query("SELECT * FROM trainer WHERE trainer_id = ?", [
       req.params.id,
@@ -72,11 +97,18 @@ export const getTrainer = async (req, res) => {
 
 export const getAthletes = async (req, res) => {
   console.log("getAthletes", req.headers.authorization);
+  const  error  = validateId(req.params.id);
+  if (error) return res.status(400).json(error);
+
   try {
     const [result] = await pool.query(
       "SELECT a.id, a.name, a.email, a.phone_num, a.birth_date, a.gender, a.height, a.weight, np.id_nutritional_plan, np.name as nutritional_plan_name, r.name as routine_name, r.id_routine FROM athlete as a LEFT JOIN nutritional_plan as np ON a.id = np.athlete_id LEFT JOIN routine AS r ON a.id = r.athlete_id WHERE a.trainer_id = ?",[
         req.params.id,
       ]);
+      if (result.length === 0) {
+        res.status(404).json({ message: "athletes not found" });
+        return;
+      }
     res.json(result);
   } catch (error) {
     return res.status(500).json({ message: error.message });
@@ -84,6 +116,9 @@ export const getAthletes = async (req, res) => {
 };
 
 export const getSessions = async (req, res) => {
+  const  error  = validateId(req.params.id);
+  if (error) return res.status(400).json(error);
+
   try {
     const [result] = await pool.query("SELECT s.id_training_session,  s.name, s.description, s.session_date, s.trainer_notes, r.athlete_id FROM training_session AS s JOIN routine AS r ON  s.routine_id = r.id_routine WHERE r.athlete_id = ?;", [
       req.params.id,
@@ -104,6 +139,9 @@ export const getSessions = async (req, res) => {
 };
 
 export const getSession = async (req, res) => {
+  console.log("getSession", req.params.id);
+  const  error  = validateId(req.params.id);
+  if (error) return res.status(400).json(error);
   try {
     const [result] = await pool.query("SELECT * FROM training_session WHERE id_training_session = ?", [
       req.params.id,
@@ -132,6 +170,8 @@ function groupBy(objectArray, property) {
   }, {});
 }
 export const getExecutions = async (req, res) => {
+  const  error  = validateId(req.params.id);
+  if (error) return res.status(400).json(error);
   try {
     const [result] = await pool.query("SELECT execution.*, exercise.id_exercise as id_exercise, exercise.name AS exercise_name FROM execution JOIN exercise ON execution.exercise_id = exercise.id_exercise WHERE execution.training_session_id = ? ;", [
       req.params.id,
@@ -148,6 +188,8 @@ export const getExecutions = async (req, res) => {
 };
 
 export const getAthleteMealRecords = async (req, res) => { 
+  const  error  = validateId(req.params.athleteId);
+  if (error) return res.status(400).json(error);
   try {
     const [result] = await pool.query("SELECT meal_record.*, meal.name AS meal_name, nutritional_plan.dietitian_id, nutritional_plan.athlete_id FROM meal_record JOIN meal ON meal_record.meal_id = meal.id_meal JOIN nutritional_plan ON meal_record.nutritional_plan_id =nutritional_plan.id_nutritional_plan WHERE nutritional_plan.athlete_id = ?;", [
       req.params.athleteId,
@@ -168,6 +210,12 @@ export const getAthleteMealRecords = async (req, res) => {
 };
 
 export const getProgression = async (req, res) => {
+  const idAthleteError = validateId(req.params.idAthlete);
+  if ( idAthleteError) return res.status(400).json(idAthleteError);
+
+  const  exerciseIdError  = validateId(req.params.exerciseId);
+  if (exerciseIdError ) return res.status(400).json(exerciseIdError);
+  
   try {
     const [result] = await pool.query("SELECT execution.*, exercise.name AS exercise_name, training_session.session_date AS date, routine.athlete_id FROM execution JOIN exercise ON execution.exercise_id = exercise.id_exercise JOIN training_session on execution.training_session_id = training_session.id_training_session  JOIN routine ON training_session.routine_id = routine.id_routine WHERE execution.exercise_id = ? AND routine.athlete_id = ? ORDER BY training_session.session_date DESC;", [
       req.params.exerciseId,
@@ -191,6 +239,8 @@ export const getProgression = async (req, res) => {
 };
 
 export const getExercise = async (req, res) => {
+  const  error  = validateId(req.params.id);
+  if (error) return res.status(400).json(error);
   try {
     const [result] = await pool.query("SELECT * FROM exercise WHERE id_exercise = ?", [
       req.params.id,
@@ -222,6 +272,10 @@ export const createTrainer = async (req, res) => {
 };
 
 export const createTrainerAthlete = async (req, res) => {
+
+  let athlete = {...req.body};
+  athlete.trainer_id = req.params.id;
+
   try {
     let athlete = {...req.body};
     athlete.trainer_id = req.params.id;
@@ -241,10 +295,14 @@ export const createTrainerAthlete = async (req, res) => {
 };
 
 export const createRoutine = async (req, res) => {
-  try {
-    let routine = {...req.body};
-    routine.trainer_id = req.params.id
+  let routine = {...req.body};
+    routine.trainer_id = req.params.id;
     routine.athlete_id = req.params.athleteId;
+  
+  const  routineError  = validateRoutine(routine);
+  if (routineError) return res.status(400).json(routineError);
+  
+  try {
     const { name, description, trainer_id, athlete_id} = routine;
     const [result] = await pool.query(
       "INSERT INTO routine (name, description, trainer_id, athlete_id) VALUES (?, ?, ?, ?)",
@@ -263,11 +321,11 @@ export const createRoutine = async (req, res) => {
 };
 
 export const createSession = async (req, res) => {
+  console.log(req.body);
   try {
     let session = {...req.body};
     
-    
-
+  
     session.routine_id = parseInt(session.routine_id);
     session.session_date = formatDateToMysql(session.session_date);
 
@@ -291,6 +349,7 @@ export const createSession = async (req, res) => {
 
 export const createExercise = async (req, res) => {
   try {
+    console.log("createExercise",req.body);
     const { name, description, muscle_group, trainer_id } = req.body;
     const [result] = await pool.query(
       "INSERT INTO exercise (name, description, muscle_group, trainer_id) VALUES (?, ?, ?, ?)",
@@ -327,6 +386,8 @@ export const createExecution = async (req, res) => {
 };
 
 export const createMeal = async (req, res) => {
+  const mealError = validateMeal(req.body);
+
   try {
     const { name, description, recipe, calories, protein, carbohydrates, fat, dietitian_id } = req.body;
     const [result] = await pool.query(
@@ -363,14 +424,29 @@ export const trainerLogin = async (req, res) => {
     console.log("trainer:", req.body);
     const { email, password } = req.body;
     let hashedPassword = await bcrypt.hash(password, 8);
-    const result = await pool.query("SELECT name FROM trainer WHERE email = ? AND password = ?", [
-      email,
-      hashedPassword
-    ]);
-    if (result.length > 0) {
-      res.json(result[0]);
+    const result = await pool.query(
+      "SELECT trainer_id, name, password FROM trainer WHERE email = ?",
+      [email, hashedPassword]
+    );
+    console.log("result:", result[0][0]);
+
+    if (result[0].length > 0 && (await bcrypt.compare(password, result[0][0].password))) {
+      console.log("LOGGED");
+      console.log("loged id:", result[0][0].trainer_id);
+
+      const token = createToken(result[0][0].trainer_id);
+      console.log("token:", token);
+
+      const { trainer_id: id, name } = result[0][0];
+      console.log(result[0][0]);
+
+
+      res.status(202).json({ id, name, email, token, role: "trainer" });
+      return;
     } else {
+      console.log("NOT LOGGED");
       res.status(404).json({ message: "User not found" });
+      return;
     }
   } catch (error) {
     return res.status(500).json({ message: error.message });
@@ -378,6 +454,7 @@ export const trainerLogin = async (req, res) => {
 };
 
 export const trainerRegister = async (req, res) => {
+  console.log("trainer Register:", req.body);
   try {
     console.log("trainer Register:", req.body);
     const { name, email, password, phone_num, birth_date, gender } = req.body;
@@ -418,6 +495,9 @@ export const deleteTrainerAthlete = async (req, res) => {
 };
 
 export const updateTrainer = async (req, res) => {
+  const idError = validateId(req.params.id);
+  if (idError) return res.status(400).json(idError);
+  const trainerError = validateTrainer(req.body);
   try {
     const result = await pool.query("UPDATE trainer SET ? WHERE trainer_id = ?", [
       req.body,
@@ -430,6 +510,8 @@ export const updateTrainer = async (req, res) => {
 };
 
 export const updateSession = async (req, res) => {
+  console.log("updateSession:", req.body);
+
   try {
     const result = await pool.query("UPDATE training_session SET name = ?, description = ?, session_date = ?, trainer_notes = ?  WHERE id_training_session = ?", [
       req.body.name,
@@ -445,6 +527,7 @@ export const updateSession = async (req, res) => {
 };
 
 export const updateExercise = async (req, res) => {
+  console.log("updateExercise:", req.body);
   try {
     const result = await pool.query("UPDATE exercise SET ? WHERE id_exercise = ?", [
       req.body,
@@ -470,6 +553,9 @@ export const updateMeal = async (req, res) => {
 };
 
 export const deleteTrainer = async (req, res) => {
+  const idError = validateId(req.params.id);
+  if (idError) return res.status(400).json(idError);
+
   try {
     const [result] = await pool.query("DELETE FROM trainer WHERE trainer_id = ?", [
       req.params.id,
@@ -486,6 +572,15 @@ export const deleteTrainer = async (req, res) => {
 };
 
 export const deleteRoutine = async (req, res) => {
+  const routineIdError = validateId(req.params.routineId);
+  if (routineIdError) return res.status(400).json(idError);
+
+  const idError = validateId(req.params.id);
+  if (idError) return res.status(400).json(idError);
+
+  const athleteIdError = validateId(req.params.athleteIdError);
+  if (athleteIdError) return res.status(400).json(idError);
+
   try {
     const [result] = await pool.query("DELETE FROM routine WHERE id_routine = ? and trainer_id = ? and athlete_id = ?", 
     [req.params.routineId, req.params.id, req.params.athleteId]);
@@ -501,6 +596,9 @@ export const deleteRoutine = async (req, res) => {
 };
 
 export const deleteSession= async (req, res) => {
+  const sessionIdError = validateId(req.params.sessionId);
+  if (sessionIdError) return res.status(400).json(sessionIdError);
+  
   try {
     const [result] = await pool.query("DELETE FROM training_session WHERE id_training_session = ?", [
       req.params.sessionId,
@@ -517,6 +615,8 @@ export const deleteSession= async (req, res) => {
 };
 
 export const deleteExercise = async (req, res) => {
+  const idError = validateId(req.params.id);
+  if (idError) return res.status(400).json(idError);
   try {
     const [result] = await pool.query("DELETE FROM exercise WHERE id_exercise = ?", [
       req.params.id,
@@ -524,6 +624,7 @@ export const deleteExercise = async (req, res) => {
 
     if (result.affectedRows === 0) {
       res.status(404).json({ message: "exercise not found" });
+      return;
     }
     return res.sendStatus(204);
   } catch (error) {
@@ -532,6 +633,9 @@ export const deleteExercise = async (req, res) => {
 };
 
 export const deleteMeal = async (req, res) => {
+  const idError = validateId(req.params.id);
+  if (idError) return res.status(400).json(idError);
+  
   try {
     const [result] = await pool.query("DELETE FROM meal WHERE id_meal = ?", [
       req.params.id,
@@ -539,6 +643,7 @@ export const deleteMeal = async (req, res) => {
 
     if (result.affectedRows === 0) {
       res.status(404).json({ message: "meal not found" });
+      return;
     }
     return res.sendStatus(204);
   } catch (error) {

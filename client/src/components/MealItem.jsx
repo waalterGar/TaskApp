@@ -1,13 +1,16 @@
 import { useMeals } from "../context/MealProvider";
 import { useNavigate } from "react-router-dom";
+import { useAuth } from "../context/AuthProvider";
 
-function MealItem({ meal, params }) {
+function MealItem({ meal }) {
+console.log("meal",meal);
+const { user } = useAuth();
+
   const {} = useMeals();
   const navigate = useNavigate();
-  console.log("params",params);
   
   return (
-    <div className="bg-zinc-700 text-white rounded-md p-4 flex cursor-pointer" onClick={() =>navigate(`/dietitians/${params.id}/meals/${meal.id_meal}`)}>
+    <div className="bg-zinc-700 text-white rounded-md p-4 flex cursor-pointer" onClick={() =>navigate(`/dietitians/${user?user.id:""}/meals/${meal.id_meal}`)}>
        
     <div className="w-1/4 justify-center items-center px-4">
     <h2 className="text-sm ">{meal.id_meal}</h2>

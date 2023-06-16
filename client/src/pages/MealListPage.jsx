@@ -14,8 +14,9 @@ function MealListPage() {
   const { user } = useAuth();
 
   useEffect(() => {
+    if (!user) return;
     const fetchMeals = async () => {
-     const meals  =  await loadMeals(params.id, user.token);
+     const meals  =  await loadMeals(user.id, user.token);
     };
     fetchMeals();
   }, [user]);
@@ -26,7 +27,7 @@ function MealListPage() {
     return meals.map((meal) => (
       <div>
         <MealItem meal={meal} params={params} key={meal.id_meal} />
-        <EditButton btnlink={`/dietitians/${params.id}/meals/${meal.id_meal}/edit`}/>
+        <EditButton btnlink={`/meals/${meal.id_meal}/edit`}/>
         <DeleteButton deleteSubject={"meal"} id={meal.id_meal}/>
       </div>
     ));
@@ -34,11 +35,13 @@ function MealListPage() {
 
   return (
     <div>
-      <TitleHeader
+    <TitleHeader
         title="My meals"
         btntext={"+ Add Meal"}
-        btnlink={`/dietitians/${params.id}/meals/new`}
-      />
+        btnlink={`/meals/new`}
+       role={user? user.role : ""} 
+       btndisabled={user?user.role==="trainer"?true:false:false}
+       />
       <div className="grid grid-cols-3 gap-1.5 px-20">{renderMain()}</div>
     </div>
   );

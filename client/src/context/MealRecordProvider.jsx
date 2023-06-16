@@ -17,6 +17,7 @@ export const MealRecordContextProvider = ({ children }) => {
   const [mealRecords, setMealRecords] = useState([]);
 
   async function loadMealRecords(id, token) {
+    console.log("loadMealRecords",id);
     const response = await getAthleteMealRecordsRequest(id, token);
     setMealRecords(response.data);
   }

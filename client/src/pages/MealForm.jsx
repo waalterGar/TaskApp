@@ -5,6 +5,7 @@ import { useEffect, useState } from "react";
 import { useAuth } from "../context/AuthProvider";
 
 function MealForm() {
+  const { user } = useAuth();
   const { getMeal, updateMeal, createMeal } = useMeals();
   const [meal, setMeal] = useState({
     name: "",
@@ -17,13 +18,12 @@ function MealForm() {
   });
   const params = useParams();
   const navigate = useNavigate();
-  const { user } = useAuth();
+  
 
   useEffect(() => {
     const loadMeal = async () => {
-        console.log("params", params);
       if (params.id) {
-        const meal = await getMeal(params.idDietitian, params.id, user.token);
+        const meal = await getMeal(user.id, params.id, user.token);
         console.log("usefect", meal);
         setMeal({
           name: meal.name,
@@ -46,8 +46,9 @@ function MealForm() {
         onSubmit={async (values, actions) => {
           console.log(values, params);
 
-          if (params.idDietitian && !params.id) {
-            await createMeal(values, params.idDietitian, user.token);
+          if (user.id && !params.id) {
+            console.log("create",);
+            await createMeal(values, user?user.id:"", user.token);
           }
 
           if (params.id) {

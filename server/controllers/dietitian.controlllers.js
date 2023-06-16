@@ -37,11 +37,17 @@ export const getDietitian = async (req, res) => {
 };
 
 export const getAthletes = async (req, res) => {
+  console.log("getAthletes", req.headers.authorization);
+
   try {
     const [result] = await pool.query(
-      "SELECT * FROM athlete WHERE dietitian_id = ?",
-      [req.params.id]
-    );
+      "SELECT a.id, a.name, a.email, a.phone_num, a.birth_date, a.gender, a.height, a.weight, np.id_nutritional_plan, np.name as nutritional_plan_name, r.name as routine_name, r.id_routine FROM athlete as a LEFT JOIN nutritional_plan as np ON a.id = np.athlete_id LEFT JOIN routine AS r ON a.id = r.athlete_id WHERE a.dietitian_id = ?",[
+        req.params.id,
+      ]);
+      if (result.length === 0) {
+        res.status(404).json({ message: "athletes not found" });
+        return;
+      }
     res.json(result);
   } catch (error) {
     return res.status(500).json({ message: error.message });
@@ -214,6 +220,22 @@ export const createMeal = async (req, res) => {
       id: result.insertId,
       name,
     });
+    return;
+  } catch (error) {
+    return res.status(500).json({ message: error.message });
+  }
+};
+
+export const addDietitianAthlete = async (req, res) => {
+  console.log(req.params);
+ 
+  try {
+    console.log(req.params);  
+    const result = await pool.query("UPDATE athlete SET dietitian_id = ? WHERE id = ?", [
+      req.params.idDietitian,
+      req.params.id
+    ]);
+    res.json(result);
   } catch (error) {
     return res.status(500).json({ message: error.message });
   }
@@ -237,12 +259,17 @@ export const dietitianLogin = async (req, res) => {
       console.log("loged id:", result[0][0].dietitian_id);
 
       const token = createToken(result[0][0].dietitian_id);
+
+      const { dietitian_id: id, name } = result[0][0];
+
       console.log("token:", token);
 
-      res.status(202).json({ email, token });
+      res.status(202).json({ id, name, email, token, role: "dietitian" });
+      return;
     } else {
       console.log("NOT LOGGED");
       res.status(404).json({ message: "User not found" });
+      return;
     }
   } catch (error) {
     return res.status(500).json({ message: error.message });
@@ -269,6 +296,19 @@ export const dietitianRegister = async (req, res) => {
     console.log("token:", token);
 
     res.status(202).json({ email, token });
+    return;
+  } catch (error) {
+    return res.status(500).json({ message: error.message });
+  }
+};
+
+export const deleteDietitianAthlete = async (req, res) => {
+  try {
+    const result = await pool.query("UPDATE athlete SET dietitian_id = NULL WHERE id = ? AND dietitian_id = ?", [
+      req.params.id,
+      req.params.idDietitian
+    ]);
+    res.json(result);
   } catch (error) {
     return res.status(500).json({ message: error.message });
   }

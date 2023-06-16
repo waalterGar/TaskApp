@@ -7,15 +7,17 @@ import DeleteButton from "../components/DeleteButton";
 import { useAuth } from "../context/AuthProvider";
 
 function AthletesPage() {
+  const { user } = useAuth();
   const { athletes, loadAthletes } = useAthletes();
   const params = useParams();
   const navigate = useNavigate();
-  const { user } = useAuth();
   console.log("user", user);
  
   useEffect(() => {
     const fetchAthletes = async () => {
-        const athletes= await loadAthletes(params.id, user.token);
+        console.log("fetchAthletes", user.id , user.role, user.token);
+        if (!user) return;
+        const athletes = await loadAthletes(user.id, user.role ,user.token);
     };
     fetchAthletes();
   }, [user]);
@@ -26,8 +28,8 @@ function AthletesPage() {
     console.log(athletes);
     return athletes.map((athlete) => (
       <div className="flex">
-        <AthleteCard athlete={athlete} key={athlete.id} trainerId={params.id} />
-        <DeleteButton id={athlete.id} secondId={params.id} deleteSubject={"athlete"}/>
+        <AthleteCard  athlete={athlete} key={athlete.id} trainerId={user?user.id:""} />
+        <DeleteButton id={athlete.id} secondId={user? user.id:""} role={user?user.role:""} deleteSubject={"athlete"}/>
       </div>
     ));
   }
@@ -37,7 +39,8 @@ function AthletesPage() {
       <TitleHeader
         title="My Athletes"
         btntext={"+ Add Athlete"}
-        btnlink={`/trainers/${params.id}/athletes/new`}
+        btnlink={`/athletes/new`}
+        role={user? user.role : ""}
       />
       <div className="text-white px-40 flex">
         <div className="w-1/4">Name</div>

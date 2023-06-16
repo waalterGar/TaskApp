@@ -43,6 +43,7 @@ export const createExercise = async (req, res) => {
 };
 
 export const updateExercise = async (req, res) => {
+  console.log(req.body);
   try {
     const result = await pool.query("UPDATE exercise SET ? WHERE id_exercise = ?", [
       req.body,

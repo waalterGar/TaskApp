@@ -7,6 +7,7 @@ import { useMealRecords } from "../context/MealRecordProvider";
 import { useAthletes } from "../context/AthleteProvider";
 import EditButton from "../components/EditButton";
 import { useAuth } from "../context/AuthProvider";
+import DeleteButton from "../components/DeleteButton";
 
 function MealPlanPage() {
   const { mealRecords, loadMealRecords } = useMealRecords();
@@ -24,6 +25,7 @@ function MealPlanPage() {
   const { user } = useAuth();
 
   useEffect(() => {
+   if (!user) return;
     const loadMealPlan = async () => {
       if (params.id) {
         const mealPlans = await loadMealRecords(params.id, user.token);
@@ -43,14 +45,16 @@ function MealPlanPage() {
   function renderMain() {
     if (mealRecords.length === 0) return <h1>No meals yet</h1>;
     console.log(mealRecords);
-    if (params.idDietitian) {
+    if (user) {
       return mealRecords.map((meal) => (
         <div className="flex">
           <MealCard meal={meal} key={meal.id_meal_record} />
           <EditButton
-            btnlink={`/mealRecords/${meal.id_meal_record}/edit/`}
+            btnlink={`/mealRecords/${meal.id_meal_record}/edit/`} btndisabled={user?user.role==="trainer"?true:false:false}
            />
+            <DeleteButton  id={meal.id_meal_record} deleteSubject={"mealRecord"} token ={user?user.token:""}btndisabled={user?user.role==="trainer"?true:false:false}/>
         </div>
+        
       ));
     }
     return mealRecords.map((meal) => (
@@ -60,28 +64,15 @@ function MealPlanPage() {
     ));
   }
 
-  function renderTitleHeader() {
-    if (params.idDietitian) {
-      return (
-        <TitleHeader
-          title="Meal Plan"
-          btntext={"+ Add Meal Record"}
-          btnlink={`/dietitians/${params.idDietitian}/mealPlan/${params.idMealPlan}/mealRecords/new`}
-        />
-      );
-    }
-    return (
-      <TitleHeader
-        title="Meal Plan"
-        btntext={"+ Add Meal Record"}
-      />
-    );
-  }
-
   return (
     <div>
-      {renderTitleHeader()}
-      {renderHeader()}
+       <TitleHeader
+        title="Meal Plan"
+        btntext={"+ Add Meal Recordssss"}
+        btnlink={`/sessions/${params.id}/executions/new`}
+        role={user? user.role : ""} 
+        btndisabled={user?user.role==="trainer"?true:false:false}
+       />
       <div className="text-white px-40 flex">
         <div className="w-1/4">Name</div>
         <div className="w-1/4">Quantity</div>

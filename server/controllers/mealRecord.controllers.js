@@ -1,4 +1,5 @@
 import { pool } from "../db.js";
+import { formatDateToMysql } from "../utils.js";
 
 export const getMealRecords = async (req, res) => {
   try {
@@ -47,6 +48,12 @@ export const createMealRecord = async (req, res) => {
 };
 
 export const updateMealRecord = async (req, res) => {
+
+  //parse qauntity from string to int
+  req.body.quantity = parseInt(req.body.quantity);
+  //pare date to mysql format
+  req.body.date = formatDateToMysql(req.body.date);
+    console.log(req.body);
   try {
     const result = await pool.query("UPDATE meal_record SET quantity = ?, date = ? WHERE id_meal_record = ?", [
       req.body.quantity,
@@ -54,6 +61,18 @@ export const updateMealRecord = async (req, res) => {
       req.params.id,
     ]);
     res.json(result);
+  } catch (error) {
+    return res.status(500).json({ message: error.message });
+  }
+};
+
+export const setCompleted = async (req, res) => {
+
+  try {
+    const result = await pool.query("UPDATE meal_record SET eaten = 1 WHERE id_meal_record = ?", [
+      req.params.id,
+    ]);
+    res.status(202).json({status:"success"});
   } catch (error) {
     return res.status(500).json({ message: error.message });
   }

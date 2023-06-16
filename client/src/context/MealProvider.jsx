@@ -41,8 +41,8 @@ export const MealContextProvider = ({ children }) => {
   const createMeal = async (meal, idDietitian, token) => {
     try {
       //make a copy of idDietitian parsed to integer
-      let parsed_idDietitian = parseInt(idDietitian);
-      meal.dietitian_id = parsed_idDietitian;
+      console.log("meal", meal, "idDietitian", idDietitian);
+      meal.dietitian_id = idDietitian
       const response = await createMealRequest(meal, token);
       console.log(response);
     } catch (error) {

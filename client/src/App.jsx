@@ -1,5 +1,4 @@
 import { Route, Routes } from "react-router-dom";
-import NotFound from "./pages/NotFound";
 import { AthleteContextProvider } from "./context/AthleteProvider";
 import { SessionContextProvider } from "./context/SessionProvider";
 import { ExecutionContextProvider } from "./context/ExecutionProvider";
@@ -24,7 +23,8 @@ import MealForm from "./pages/MealForm";
 import MealRecordForm from "./pages/MealRecordForm";
 import LoginForm from "./pages/LoginForm";
 import RegisterForm from "./pages/RegisterForm";
-import MainPage from "./pages/MainPage";
+import Dashboard from "./pages/Dashboard";
+import ProfilePage from "./pages/ProflePage";
 
 function App() {
   return (
@@ -32,24 +32,23 @@ function App() {
         <Navbar /> 
         <div className="container mx-auto py-4 px-20">
         <Routes>
-          <Route path="/" element={<MainPage />} />
-          <Route path="*" element={<NotFound />} />
+          <Route path="/" element={<Dashboard />} />
           <Route path="/login" element={<LoginForm />} />
           <Route path="/register" element={<RegisterForm />} />
+          <Route path="/profile" element={<ProfilePage />} />
         </Routes>
       <AthleteContextProvider>
         <Routes>
-          <Route path="/trainers/:id/athletes" element={<AthletesPage />} />
-          <Route path="/dietitians/:id/athletes" element={<AthletesPage />} />
-          <Route path="/trainers/:idTrainer/athletes/new" element={<AthleteForm />} />
+          <Route path="/athletes" element={<AthletesPage />} />
+          <Route path="/athletes/new" element={<AthleteForm />} />
           </Routes>
       </AthleteContextProvider>
       <AthleteContextProvider>
       <SessionContextProvider>
         <Routes>
-          <Route path="/trainers/:idTrainer/routines/:idRoutine/athlete/:id/sessions/" element={<SessionsPage />} />
-          <Route path="/sessions/:id/edit/" element={<SessionForm />} />
-          <Route path="/routines/:idRoutine/sessions/new/" element={<SessionForm />} />
+          <Route path="/routines/:idRoutine/athlete/:id/sessions/" element={<SessionsPage />} />
+          <Route path="/routines/:idRoutine/athlete/:id/sessions/:idSession/edit/" element={<SessionForm />} />
+          <Route path="/routines/:idRoutine/athlete/:id/sessions/new/" element={<SessionForm />} />
           </Routes>
       </SessionContextProvider>
       </AthleteContextProvider>
@@ -58,9 +57,9 @@ function App() {
       <ExecutionContextProvider>
       <SessionContextProvider>
         <Routes>
-          <Route path="/trainers/:idTrainer/athlete/:idAthlete/sessions/:id/executions/" element={<ExecutionPage />} />
-          <Route path="/executions/:id/edit/" element={<ExecutionForm />} />
-          <Route path="/trainer/:idTrainer/sessions/:id/executions/new" element={<ExecutionForm />} />
+          <Route path="/sessions/:id/executions/" element={<ExecutionPage />} />
+          <Route path="/executions/:idExecution/edit/" element={<ExecutionForm />} />
+          <Route path="/sessions/:idSession/executions/new" element={<ExecutionForm />} />
           </Routes>
         </SessionContextProvider>
       </ExecutionContextProvider>
@@ -85,16 +84,16 @@ function App() {
           <Route path="/mealPlan/:id" element={<MealPlanPage />} />
           <Route path="/dietitians/:idDietitian/mealPlan/:idMealPlan/athletes/:id/mealRecords" element={<MealPlanPage />} />
           <Route path="/mealRecords/:idMealRecord/edit/" element={<MealRecordForm />} />
-          <Route path="/dietitians/:idDietitian/mealPlan/:idMealPlan/mealRecords/new" element={<MealRecordForm />} />
+          <Route path="/mealPlan/:idMealPlan/mealRecords/new" element={<MealRecordForm />} />
           </Routes>
       </MealRecordContextProvider>
       </MealContextProvider>
       </AthleteContextProvider>
       <MealContextProvider>
         <Routes>
-          <Route path="/dietitians/:id/meals" element={<MealListPage />} />
-          <Route path="/dietitians/:idDietitian/meals/new" element={<MealForm />} />
-          <Route path="/dietitians/:idDietitian/meals/:id/edit" element={<MealForm />} />
+          <Route path="/meals" element={<MealListPage />} />
+          <Route path="/meals/new" element={<MealForm />} />
+          <Route path="/meals/:id/edit" element={<MealForm />} />
           <Route path="/dietitians/:id/meals/:idMeal" element={<MealDetailPage />} />
           </Routes>
       </MealContextProvider>

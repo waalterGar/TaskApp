@@ -8,9 +8,9 @@ import {
   TextField,
   Button,
   CssBaseline,
-    InputLabel,
-    MenuItem,
-    Select
+  InputLabel,
+  MenuItem,
+  Select,
 } from "@mui/material";
 import { LockOutlined as LockOutlinedIcon } from "@mui/icons-material";
 import axios from "axios";
@@ -21,7 +21,85 @@ const LoginForm = () => {
   const [body, setBody] = useState({ email: "", password: "" });
   const { dispatch } = useAuth();
   const navigate = useNavigate();
-  
+  const [errors, setErrors] = useState({});
+  const [helperTexts, setHelperText] = useState("");
+
+  const validate = () => {
+    let isValid = true;
+    let helpers = {};
+    let errors = {};
+
+    if (!body.role) {
+      helpers.role = "This field is required.";
+      errors.role = true;
+      isValid = false;
+    }
+
+    if (!body.name) {
+      helpers.name = "This field is required.";
+      errors.name = true;
+      isValid = false;
+    }else if(!body.name.match(/^[a-zA-Z]+(([',. -][a-zA-Z ])?[a-zA-Z]*)*$/)){
+      helpers.name = "Name is not valid";
+      errors.name = true;
+      isValid = false;
+    }
+
+    if (!body.email) {
+      helpers.email = "This field is required.";
+      errors.email = true;
+      isValid = false;
+    } else if (!body.email.match(/^[a-zA-Z0-9.!#$%&'*+/=?^_`{|}~-]+@[a-zA-Z0-9-]+(?:\.[a-zA-Z0-9-]+)*$/)
+    ) {
+      helpers.email = "Email is not valid.";
+      errors.email = true;
+      isValid = false;
+    }
+
+    if (!body.password) {
+      helpers.password = "This field is required.";
+      errors.password = true;
+      isValid = false;
+    } else if (!body.password.match(/^(?=.*[A-Za-z])(?=.*\d)[A-Za-z\d]{8,}$/)) {
+      helpers.password =
+        "Password must be at least 8 characters long and contain at least one letter and one number.";
+      errors.password = true;
+      isValid = false;
+    }
+
+    if (!body.phone_num) {
+      helpers.phone_num = "This field is required.";
+      errors.phone_num = true;
+      isValid = false;
+    } else if (!body.phone_num.match(/^[6789]\d{8}$/)) {
+      helpers.phone_num = "Phone number is not valid. It must start with 6,7,8 or 9 and must be 9 digits long.";
+      errors.phone_num = true;
+      isValid = false;
+    }
+
+    if (!body.birth_date) {
+      helpers.birth_date = "This field is required.";
+      errors.birth_date = true;
+      isValid = false;
+    }
+
+    if(!body.gender){
+      helpers.gender = "This field is required.";
+      errors.gender = true;
+      isValid = false;
+    }
+
+    setErrors({
+      ...errors,
+    });
+
+    setHelperText({
+      ...helpers,
+    });
+
+    return isValid;
+  };
+
   const inputChange = ({ target }) => {
     const { name, value } = target;
     setBody({
@@ -31,30 +109,31 @@ const LoginForm = () => {
   };
 
   const onSubmit = async () => {
-    console.log("onsubmit", body);
-    if (body.role === "trainer") {
-    axios
-      .post("http://localhost:4000/trainer/register", body)
-      .then(({ data }) => {
-        navigate("/login");
-      })
-      .catch(({ response }) => {
-        console.log(response.data);
-      });
-    } 
-    if(body.role == "dietitian"){
+    console.log("BODY", body);
+    if(validate()){
+      if (body.role === "trainer") {
+        axios
+          .post("http://localhost:4000/trainer/register", body)
+          .then(({ data }) => {
+            navigate("/login");
+          })
+          .catch(({ response }) => {
+            console.log(response.data);
+          });
+      }
+      if (body.role == "dietitian") {
         console.log("onsubmit dietitian");
         axios
-        .post("http://localhost:4000/dietitian/register", body)
-        .then(({ data }) => {
-           
+          .post("http://localhost:4000/dietitian/register", body)
+          .then(({ data }) => {
             navigate("/login");
-        })
-        .catch(({ response }) => {
+          })
+          .catch(({ response }) => {
             console.log(response.data);
-        });
+          });
+      }
+      console.log("submited");
     }
-    console.log("submited");
   };
 
   return (
@@ -69,14 +148,18 @@ const LoginForm = () => {
             Register
           </Typography>
           <form>
-          <InputLabel id="demo-simple-select-label">Role</InputLabel>
+            <InputLabel id="demo-simple-select-label">Role</InputLabel>
             <Select
+              fullWidth
+              required
               labelId="demo-simple-select-label"
               id="demo-simple-select"
               name="role"
               value={body.role}
               label="Role"
               onChange={inputChange}
+              HelperText = {helperTexts.role} 
+              error={errors.role}       
             >
               <MenuItem value={"dietitian"}>Dietitian</MenuItem>
               <MenuItem value={"trainer"}>Trainer</MenuItem>
@@ -84,6 +167,7 @@ const LoginForm = () => {
             <TextField
               fullWidth
               autoFocus
+              required
               color="primary"
               margin="normal"
               variant="outlined"
@@ -91,11 +175,14 @@ const LoginForm = () => {
               value={body.name}
               onChange={inputChange}
               name="name"
+              helperText = {helperTexts.name}
+              error={errors.name}
             />
 
             <TextField
               fullWidth
               autoFocus
+              required
               color="primary"
               margin="normal"
               variant="outlined"
@@ -103,9 +190,12 @@ const LoginForm = () => {
               value={body.email}
               onChange={inputChange}
               name="email"
+              helperText = {helperTexts.email}
+              error={errors.email}
             />
             <TextField
               fullWidth
+              required
               type="password"
               color="primary"
               margin="normal"
@@ -114,40 +204,60 @@ const LoginForm = () => {
               value={body.password}
               onChange={inputChange}
               name="password"
+              helperText = {helperTexts.password}
+              error={errors.password}
             />
             <TextField
               fullWidth
               autoFocus
+              required
               color="primary"
               margin="normal"
               variant="outlined"
               label="Phone number"
               value={body.phone_num}
               onChange={inputChange}
-              name="phone_num"
+              name="phone_num" 
+              helperText = {helperTexts.phone_num}
+              error={errors.phone_num}        
             />
+            <InputLabel id="demo-simple-select-label">Date</InputLabel>
             <TextField
               fullWidth
               autoFocus
+              required
+              type="date"
               color="primary"
               margin="normal"
               variant="outlined"
-              label="Birth date"
+              format="YYYY-MM-DD"
               value={body.birth_date}
               onChange={inputChange}
               name="birth_date"
+              helperText = {helperTexts.birth_date}
+              error={errors.birth_date}
             />
-            <TextField
+            <InputLabel id="demo-simple-select-label">Gender</InputLabel>
+            <Select
               fullWidth
-              autoFocus
-              color="primary"
-              margin="normal"
-              variant="outlined"
+              required
+              labelId="demo-simple-select-label"
+              id="demo-simple-select"
               label="Gender"
               value={body.gender}
               onChange={inputChange}
               name="gender"
-            />
+              helperText = {helperTexts.gender}
+              error = {errors.gender}      
+            >
+              <MenuItem value={"Male"}>Male</MenuItem>
+              <MenuItem value={"Female"}>Trainer</MenuItem>
+              <MenuItem value={"Trans Male"}>Trans Male</MenuItem>
+              <MenuItem value={"Trans Female"}>Trans Female</MenuItem>
+              <MenuItem value={"Agender"}>Agender</MenuItem>
+              <MenuItem value={"Bigender"}>Bigender</MenuItem>
+              <MenuItem value={"Other"}>Other</MenuItem>
+            </Select>
             <Button
               fullWidth
               variant="contained"

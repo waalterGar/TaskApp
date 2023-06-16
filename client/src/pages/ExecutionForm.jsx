@@ -24,14 +24,16 @@ function ExecutionForm() {
 
   useEffect(() => {
     const loadExercise = async () => {
-      if (params.id) {
-        const exercises = await loadExercises(params.idTrainer, user.token);
+      if(!user) return;
+      console.log("useEffect", params);
+      if (params.idSession) {
+        const exercises = await loadExercises(user.id, user.token);
       }
     };
     const loadExecution = async () => {
       console.log(params);
-      if (params.id && !params.idTrainer) {
-        const execution = await getExecution(params.id, user.token);
+      if (params.idExecution) {
+        const execution = await getExecution(params.idExecution, user.token);
         console.log("usefect", execution);
         setExecution({
           num_set: execution.num_set,
@@ -68,12 +70,12 @@ function ExecutionForm() {
         enableReinitialize={true}
         onSubmit={async (values, actions) => {
           console.log(values, params);
-          if (params.id) {
-            await updateExecution(params.id, values, user.token);
+          if (params.idExecution) {
+            await updateExecution(params.idExecution, values, user.token);
           }
 
-          if (params.idTrainer) {
-            values.training_session_id = params.id;
+          if (params.idSession) {
+            values.training_session_id = params.idSession;
             await createExecution(values, user.token);
           }
 
@@ -93,7 +95,7 @@ function ExecutionForm() {
             className="bg-zinc-700 text-white max-w-sm rounded-md p-4 mx-auto"
           >
             <h1 className="text-xl font-bold uppercase text-center">
-              {params.id && !params.idTrainer ? "Edit Execution" : "New Execution"}
+              {params.idExecution ? "Edit Execution" : "New Execution"}
             </h1>
 
             <label className="block">Num Set</label>

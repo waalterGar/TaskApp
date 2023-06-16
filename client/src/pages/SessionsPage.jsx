@@ -3,7 +3,7 @@ import SessionCard from "../components/SessionCard";
 import TitleHeader from "../components/TitleHeader";
 import AthleteHeader from "../components/AthleteHeader";
 import EditButton from "../components/EditButton";
-import { useParams, useNavigate } from "react-router-dom";
+import { useParams, useNavigate, useLocation } from "react-router-dom";
 import { useSessions } from "../context/SessionProvider";
 import { useAthletes } from "../context/AthleteProvider";
 import DeleteButton from "../components/DeleteButton";
@@ -23,6 +23,8 @@ function SessionsPage() {
   const params = useParams();
   const navigate = useNavigate();
   const { user } = useAuth();
+  const location = useLocation();
+  console.log(location);
 
   useEffect(() => {
     const loadSession = async () => {
@@ -30,6 +32,7 @@ function SessionsPage() {
         const sessions = await loadSessions(params.id, user.token);
         const athlete = await getAthlete(params.id , user.token);
         setAthlete(athlete);
+        console.log(sessions);
       }
     };
     loadSession();
@@ -47,8 +50,8 @@ function SessionsPage() {
     return sessions.map((session) => (
       <div className="flex">
         <SessionCard session={session} athlete={athlete} key={session.id} trainerId={params.idTrainer} />
-        <EditButton btnlink={`/sessions/${session.id_training_session}/edit/`} />
-        <DeleteButton id={session.id_training_session} deleteSubject={"session"} />
+        <EditButton btnlink={`/routines/${params.idRoutine}/athlete/${params.id}/sessions/${session.id_training_session}/edit/`} btndisabled={ user?user.role==="dietitian"?true:false:false} />
+        <DeleteButton id={session.id_training_session} deleteSubject={"session"} btndisabled={ user?user.role==="dietitian"?true:false:false} />
       </div>
     ));
   }
@@ -57,8 +60,11 @@ function SessionsPage() {
     <div>
       <TitleHeader
         title="Routine"
-        btntext={"Add Session"}
-        btnlink={`/routines/${params.idRoutine}/sessions/new/`}
+        btntext={"+ Add Session"}
+        btnlink={`/routines/${params.idRoutine}/athlete/${params.id}/sessions/new/`}
+        role={user?user.role:""}
+        returnPath={location?location.pathname:""}
+        btndisabled={user?user.role==="dietitian"?true:false:false}
       />
       {renderHeader()}
       <div className="text-white px-40 flex">
